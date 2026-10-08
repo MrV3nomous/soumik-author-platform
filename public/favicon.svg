@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <!-- Champagne Gold Gradient -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2E3C6" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#8A6327" />
+    </linearGradient>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141414" />
+      <stop offset="100%" stop-color="#020202" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="256" height="256" fill="url(#bg)" rx="56" />
+  <rect x="16" y="16" width="224" height="224" fill="none" stroke="#D4AF37" stroke-opacity="0.2" stroke-width="2" rx="44" />
+  
+  <!-- Universal Premium Fallback Serif Stack -->
+  <text x="128" y="145" font-family="Didot, 'Times New Roman', Georgia, serif" font-size="160" font-weight="normal" fill="url(#gold)" text-anchor="middle" dominant-baseline="central">
+    S
+  </text>
+</svg>
