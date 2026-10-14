@@ -12,27 +12,55 @@ import { Fragment, useEffect, useState } from 'react';
 const KDP_SELECT_ENROLLED = null;
 
 const BOOK_LINKS = {
-  // Paste the public Kindle pre-order URL from your KDP detail page.
-  kindle: '',
-  // Add the Amazon paperback product URL when it is publicly available.
-  paperback: '',
-  // Add the international hardcover product URL.
-  hardcover: '',
-  // Add the Google Play Books listing after it is published.
+  // Exact KDP marketplace links supplied by the author. These resolve through Amazon's
+  // marketplace-link handler for the relevant store and format.
+  kindleMarkets: [
+    { label: 'US', href: 'https://kdp.amazon.com/amazon-dp-action/us/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'India', href: 'https://kdp.amazon.com/amazon-dp-action/in/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'UK', href: 'https://kdp.amazon.com/amazon-dp-action/uk/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Australia', href: 'https://kdp.amazon.com/amazon-dp-action/au/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Germany', href: 'https://kdp.amazon.com/amazon-dp-action/de/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'France', href: 'https://kdp.amazon.com/amazon-dp-action/fr/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Spain', href: 'https://kdp.amazon.com/amazon-dp-action/es/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Italy', href: 'https://kdp.amazon.com/amazon-dp-action/it/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Netherlands', href: 'https://kdp.amazon.com/amazon-dp-action/nl/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Japan', href: 'https://kdp.amazon.com/amazon-dp-action/jp/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Brazil', href: 'https://kdp.amazon.com/amazon-dp-action/br/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Canada', href: 'https://kdp.amazon.com/amazon-dp-action/ca/dualbookshelf.marketplacelink/B0HML17SSR' },
+    { label: 'Mexico', href: 'https://kdp.amazon.com/amazon-dp-action/mx/dualbookshelf.marketplacelink/B0HML17SSR' },
+  ],
+
+  // Exact KDP hardcover marketplace links supplied by the author. Amazon.in is not included
+  // because the KDP hardcover listing is not available for direct distribution there.
+  hardcoverMarkets: [
+    { label: 'US', href: 'https://kdp.amazon.com/amazon-dp-action/us/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'UK', href: 'https://kdp.amazon.com/amazon-dp-action/uk/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Germany', href: 'https://kdp.amazon.com/amazon-dp-action/de/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'France', href: 'https://kdp.amazon.com/amazon-dp-action/fr/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Spain', href: 'https://kdp.amazon.com/amazon-dp-action/es/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Italy', href: 'https://kdp.amazon.com/amazon-dp-action/it/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Netherlands', href: 'https://kdp.amazon.com/amazon-dp-action/nl/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Poland', href: 'https://kdp.amazon.com/amazon-dp-action/pl/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Sweden', href: 'https://kdp.amazon.com/amazon-dp-action/se/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Belgium', href: 'https://kdp.amazon.com/amazon-dp-action/be/dualbookshelf.marketplacelink/B0HMST7VLV' },
+    { label: 'Ireland', href: 'https://kdp.amazon.com/amazon-dp-action/ie/dualbookshelf.marketplacelink/B0HMST7VLV' },
+  ],
+
+  // The paperback listing is not live yet. Add country-specific links once the listings exist.
+  paperbackMarkets: [],
+  // Google Play Books listing is still under review. Add the final public URL after approval.
   googlePlay: '',
 
-  // Existing forms from the previous version. Keep them only if they still serve
-  // the purpose described here. A Google Form is an enquiry/order form, not a payment gateway.
+  // Use this as an order enquiry only for now; don't collect payment until the local print price,
+  // stock, shipping, dispatch window, and refund terms are confirmed.
   indiaHardcoverOrderForm: 'https://forms.gle/LPfTPWX8zVFNH5Zj6',
+
+  // Keep direct digital purchase disabled while KDP Select status is unconfirmed or active.
   indiaDigitalOrderForm: 'https://forms.gle/YAsR1xGHD9Ptb7j58',
-
-  // Paste actual hosted checkout links here (for example, your payment provider's payment link).
-  // Do not put card/bank details into this React app.
   indiaHardcoverCheckout: '',
-  indiaDigitalCheckout: '', // Use only if your distribution terms permit direct digital sales.
+  indiaDigitalCheckout: '',
 
-  // Paste a hosted email-signup form URL here (Google Forms, Buttondown, MailerLite, etc.).
-  // Use a separate form specifically for consent-based story updates.
+  // Optional, consent-based email signup form. Keep blank until ready.
   newsletterSignup: '',
 };
 
@@ -68,10 +96,13 @@ const STORY = [
 const isConfiguredUrl = (url) => typeof url === 'string' && /^https?:\/\//i.test(url.trim());
 
 const VISUALS = {
-  hero: 'https://images.unsplash.com/photo-1570187671278-2370524a1197?auto=format&fit=crop&w=2400&q=88',
-  door: 'https://images.unsplash.com/photo-1770361016654-4e6f0f915d85?auto=format&fit=crop&w=1800&q=86',
-  stairs: 'https://images.unsplash.com/photo-1544194410-50e68f7c32b9?auto=format&fit=crop&w=1800&q=86',
-  storm: 'https://images.unsplash.com/photo-1758301064875-b46ec97564dd?auto=format&fit=crop&w=2000&q=86',
+  // Image URLs are taken from specific free Unsplash photo pages, rather than guessed IDs.
+  // Fallback gradients remain in place if a remote host is unavailable.
+  hero: 'https://images.unsplash.com/photo-1758301064875-b46ec97564dd?auto=format&fit=crop&w=2400&q=88',
+  sea: 'https://images.unsplash.com/photo-1766759622568-e27b4128af95?auto=format&fit=crop&w=1800&q=86',
+  door: 'https://images.unsplash.com/photo-1768807086823-d80d37e06b63?auto=format&fit=crop&w=1800&q=86',
+  stairs: 'https://images.unsplash.com/photo-1667099761510-dc70ac156c43?auto=format&fit=crop&w=1800&q=86',
+  wave: 'https://images.unsplash.com/photo-1570187853757-b599d3fc5fbd?auto=format&fit=crop&w=2000&q=86',
 };
 
 function ArrowUpRight() {
@@ -91,15 +122,60 @@ function ActionLink({ href, children, variant = 'light', className = '' }) {
   );
 }
 
-function EditionCard({ eyebrow, title, description, status, href, action, featured = false }) {
+function EditionCard({ eyebrow, title, description, status, href, storeLinks = [], action, note, featured = false, expandMarkets = false, quickMarketCount = 1 }) {
+  const availableStores = storeLinks.filter((store) => isConfiguredUrl(store.href));
+  const quickOtherStores = availableStores.slice(1, quickMarketCount);
+  const additionalStores = availableStores.slice(quickMarketCount);
   return (
     <article className={`edition-card ${featured ? 'edition-card--featured' : ''}`}>
       <p className="eyebrow">{eyebrow}</p>
       <h3>{title}</h3>
       <p className="edition-description">{description}</p>
       <p className="edition-status">{status}</p>
-      {isConfiguredUrl(href) && action ? <ActionLink href={href} variant={featured ? 'light' : 'outline'} className="edition-action">{action}</ActionLink> : (
-        <p className="edition-note">Purchase link will appear here when the listing is available.</p>
+      {availableStores.length > 1 && expandMarkets ? (
+        <div className="edition-markets edition-markets--expandable">
+          <ActionLink href={availableStores[0].href} variant={featured ? 'light' : 'outline'} className="edition-action">
+            {action || `Buy on Amazon ${availableStores[0].label}`}
+          </ActionLink>
+          {quickOtherStores.length > 0 && (
+            <div className="edition-market-links edition-market-links--quick" aria-label="More popular Amazon stores">
+              {quickOtherStores.map((store) => (
+                <a key={`${title}-${store.label}`} href={store.href} target="_blank" rel="noreferrer noopener">
+                  {store.label}<span aria-hidden="true"> ↗</span>
+                </a>
+              ))}
+            </div>
+          )}
+          {additionalStores.length > 0 && (
+            <details className="edition-market-details">
+              <summary>More Amazon stores ({additionalStores.length})</summary>
+              <div className="edition-market-links">
+                {additionalStores.map((store) => (
+                  <a key={`${title}-${store.label}`} href={store.href} target="_blank" rel="noreferrer noopener">
+                    {store.label}<span aria-hidden="true"> ↗</span>
+                  </a>
+                ))}
+              </div>
+            </details>
+          )}
+        </div>
+      ) : availableStores.length > 1 ? (
+        <div className="edition-markets">
+          <p className="edition-markets__label">Choose your Amazon store</p>
+          <div className="edition-market-links">
+            {availableStores.map((store) => (
+              <a key={`${title}-${store.label}`} href={store.href} target="_blank" rel="noreferrer noopener">
+                {store.label}<span aria-hidden="true"> ↗</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : isConfiguredUrl(availableStores[0]?.href) ? (
+        <ActionLink href={availableStores[0].href} variant={featured ? 'light' : 'outline'} className="edition-action">{action || 'View edition'}</ActionLink>
+      ) : isConfiguredUrl(href) && action ? (
+        <ActionLink href={href} variant={featured ? 'light' : 'outline'} className="edition-action">{action}</ActionLink>
+      ) : (
+        <p className="edition-note">{note || 'Purchase link will appear here when the listing is available.'}</p>
       )}
     </article>
   );
@@ -160,31 +236,41 @@ function App() {
   const hasIndiaDigitalCheckout = isConfiguredUrl(BOOK_LINKS.indiaDigitalCheckout);
 
   const storyVisuals = {
+    2: (
+      <StoryImage
+        src={VISUALS.sea}
+        type="sea"
+        number="I"
+        kicker="Beyond the glass"
+        caption="Outside, the sea had become a single moving darkness."
+        creditUrl="https://unsplash.com/photos/dark-stormy-clouds-over-a-rough-ocean-at-night-qOkC7tHW_54"
+      />
+    ),
     5: (
       <StoryImage
         src={VISUALS.door}
         type="door"
-        number="I"
+        number="II"
         kicker="The first silence"
         caption="The door opened. Nothing waited on the other side."
-        creditUrl="https://unsplash.com/photos/grungy-industrial-hallway-with-a-closed-metal-door-1BlWCk0on4U"
+        creditUrl="https://unsplash.com/photos/a-rusty-metal-door-secured-with-a-padlock-TIbcWQjYYgA"
       />
     ),
     13: (
       <StoryImage
         src={VISUALS.stairs}
         type="stairs"
-        number="II"
+        number="III"
         kicker="Above him"
         caption="Then came the sound of footsteps on the iron grating."
-        creditUrl="https://unsplash.com/photos/black-spiral-staircase-inside-house-gg1VLHHgxug"
+        creditUrl="https://unsplash.com/photos/a-large-metal-spiral-staircase-AJBO97kxCUU"
       />
     ),
     15: (
       <StoryImage
-        src={VISUALS.storm}
+        src={VISUALS.hero}
         type="storm"
-        number="III"
+        number="IV"
         kicker="The light chamber"
         caption="At the edge of the world, a figure waited in the storm."
         creditUrl="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA"
@@ -192,12 +278,22 @@ function App() {
     ),
     21: (
       <StoryImage
-        src={VISUALS.hero}
+        src={VISUALS.wave}
         type="wave"
-        number="IV"
+        number="V"
         kicker="The sea answered"
         caption="The wave came. Jack remained untouched."
-        creditUrl="https://unsplash.com/photos/a-lighthouse-surrounded-by-a-huge-wave-in-the-ocean-NcociWzk23A"
+        creditUrl="https://unsplash.com/photos/a-large-wave-hitting-a-lighthouse-on-a-stormy-day-j-ukn6RzOFo"
+      />
+    ),
+    24: (
+      <StoryImage
+        src={VISUALS.hero}
+        type="loop"
+        number="VI"
+        kicker="The night repeats"
+        caption="The light kept turning over the black water."
+        creditUrl="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA"
       />
     ),
   };
@@ -215,6 +311,14 @@ function App() {
         .site-shell * { box-sizing: border-box; }
         .progress-track { position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 2px; pointer-events: none; background: transparent; }
         .progress-fill { height: 100%; background: #d7cfba; box-shadow: 0 0 14px rgba(219,210,186,.4); transition: width .08s linear; }
+        /* A barely visible wind layer drifts across the viewport without intercepting clicks. */
+        .wind-overlay { position:fixed; z-index:9; inset:0; overflow:hidden; pointer-events:none; opacity:.78; mix-blend-mode:screen; }
+        .wind-thread { position:absolute; left:-75%; width:250%; height:clamp(90px,18vh,230px); border-radius:50%; filter:blur(19px); transform:rotate(-8deg); will-change:transform; }
+        .wind-thread--one { top:5%; background:radial-gradient(ellipse at 50% 50%,rgba(197,211,207,.105) 0%,rgba(197,211,207,.035) 27%,transparent 65%),linear-gradient(180deg,transparent 34%,rgba(204,214,209,.04) 51%,transparent 70%); animation:wind-sweep-one 47s ease-in-out infinite alternate; }
+        .wind-thread--two { top:31%; height:clamp(100px,21vh,265px); opacity:.68; background:radial-gradient(ellipse at 46% 48%,rgba(186,202,199,.09),transparent 62%),linear-gradient(180deg,transparent 32%,rgba(196,208,204,.045) 49%,transparent 71%); animation:wind-sweep-two 59s ease-in-out infinite alternate; }
+        .wind-thread--three { top:61%; height:clamp(85px,16vh,205px); opacity:.54; background:radial-gradient(ellipse at 54% 50%,rgba(192,205,203,.085),transparent 63%),linear-gradient(180deg,transparent 34%,rgba(196,208,204,.035) 49%,transparent 69%); animation:wind-sweep-three 53s ease-in-out infinite alternate; }
+        .wind-thread--four { top:82%; height:clamp(65px,12vh,160px); opacity:.48; filter:blur(26px); background:radial-gradient(ellipse at 50% 50%,rgba(177,193,190,.09),transparent 65%); animation:wind-sweep-one 67s ease-in-out infinite alternate-reverse; }
+        .wind-grain { position:absolute; inset:-30%; opacity:.1; background:repeating-linear-gradient(168deg,transparent 0 54px,rgba(218,226,219,.12) 55px,transparent 57px,transparent 116px); mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent); animation:wind-grain-drift 36s linear infinite; }
         .site-nav { position: absolute; z-index: 20; top: 0; left: 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,.1); background: linear-gradient(180deg,rgba(4,6,7,.76),rgba(4,6,7,.16)); }
         .nav-inner { max-width: 1440px; margin: 0 auto; padding: 24px clamp(20px,5vw,74px); display:flex; align-items:center; justify-content:space-between; gap:20px; }
         .brand-lockup { display:flex; flex-direction:column; gap:5px; text-decoration:none; }
@@ -273,10 +377,14 @@ function App() {
         .story-image__fallback { position:absolute; inset:0; background:radial-gradient(ellipse at 75% 25%,rgba(162,174,169,.2),transparent 28%),linear-gradient(135deg,#222b2c,#080b0c 70%); }
         .story-image__photo { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; opacity:.86; filter:saturate(.58) contrast(1.08) brightness(.7); transform:scale(1.04); animation:slow-zoom 32s ease-in-out infinite alternate; }
         .story-image__photo.image-failed { display:none; }
-        .story-image--door .story-image__photo { object-position:center 58%; }
+        .story-image--sea .story-image__photo { object-position:center 48%; }
+        .story-image--door .story-image__photo { object-position:center 56%; }
         .story-image--stairs .story-image__photo { object-position:center 50%; }
         .story-image--storm .story-image__photo { object-position:center 56%; }
-        .story-image--wave .story-image__photo { object-position:center 52%; }
+        .story-image--wave .story-image__photo { object-position:center 55%; }
+        .story-image--loop { max-width:920px; margin-top:clamp(52px,6vw,76px); margin-bottom:clamp(52px,6vw,76px); }
+        .story-image--loop .story-image__frame { height:clamp(220px,27vw,330px); min-height:200px; }
+        .story-image--loop .story-image__photo { object-position:center 57%; }
         .story-image__shade { position:absolute; inset:0; background:linear-gradient(90deg,rgba(4,7,8,.81),rgba(4,7,8,.08) 82%),linear-gradient(0deg,rgba(3,5,6,.8),transparent 58%); }
         .story-image__fog { position:absolute; inset:-20%; opacity:.32; background:radial-gradient(ellipse at 40% 75%,rgba(203,208,198,.28),transparent 32%),linear-gradient(90deg,transparent,rgba(199,205,197,.08),transparent); animation:fog-float 22s ease-in-out infinite alternate; pointer-events:none; }
         .story-image__copy { position:absolute; left:clamp(22px,5vw,56px); bottom:clamp(23px,4vw,46px); max-width:620px; z-index:2; }
@@ -334,6 +442,23 @@ function App() {
         .edition-status { margin:20px 0 0; padding-top:13px; color:#c2bcad; border-top:1px solid rgba(255,255,255,.09); font:500 8px/1.7 Inter,sans-serif; letter-spacing:.1em; text-transform:uppercase; }
         .edition-action { margin-top:15px; width:100%; min-height:43px; padding:12px 9px; font-size:8px; letter-spacing:.13em; }
         .edition-note { margin:13px 0 0; color:#656b66; font:400 9px/1.6 Inter,sans-serif; }
+
+        .edition-markets { margin-top:auto; padding-top:18px; }
+        .edition-markets__label { margin:0 0 10px; color:#7f827b; font:500 8px/1.4 Inter,sans-serif; letter-spacing:.15em; text-transform:uppercase; }
+        .edition-market-links { display:flex; flex-wrap:wrap; gap:7px; }
+        .edition-market-links--quick { margin-top:9px; }
+        .edition-market-links a { display:inline-flex; align-items:center; padding:8px 10px; border:1px solid rgba(222,216,199,.2); color:#ddd8cc; text-decoration:none; font:500 9px/1.3 Inter,sans-serif; letter-spacing:.04em; transition:background .2s,border-color .2s,color .2s; }
+        .edition-market-links a:hover { border-color:rgba(222,216,199,.55); background:rgba(255,255,255,.055); color:#fff; }
+        /* The market picker floats above the grid; opening it never resizes the edition cards. */
+        .edition-market-details { position:relative; z-index:5; margin-top:11px; }
+        .edition-market-details summary { cursor:pointer; width:max-content; max-width:100%; color:#aaa99f; font:500 8px/1.6 Inter,sans-serif; letter-spacing:.07em; text-decoration:underline; text-decoration-color:rgba(222,216,199,.32); text-underline-offset:4px; list-style:none; }
+        .edition-market-details summary::-webkit-details-marker { display:none; }
+        .edition-market-details summary::after { content:' +'; color:#bfb9aa; }
+        .edition-market-details[open] summary::after { content:' −'; }
+        .edition-market-details[open] .edition-market-links { position:absolute; top:calc(100% + 11px); left:0; width:min(280px,calc(100vw - 48px)); max-height:min(250px,46vh); overflow:auto; margin:0; padding:12px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; background:rgba(10,13,14,.97); border:1px solid rgba(222,216,199,.24); box-shadow:0 18px 55px rgba(0,0,0,.62); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); z-index:60; }
+        .edition-market-details[open] .edition-market-links a { min-width:0; justify-content:space-between; padding:10px 9px; background:rgba(255,255,255,.018); }
+        .edition-card:has(.edition-market-details[open]) { z-index:45; border-color:rgba(220,215,198,.42); }
+        .edition-market-details:focus-within summary { color:#f2eee3; outline:1px solid rgba(222,216,199,.5); outline-offset:4px; }
         .direct-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:24px; }
         .direct-row:not(.direct-row--with-newsletter) .direct-panel { grid-column:1 / -1; }
         .direct-panel { padding:clamp(22px,3vw,32px); border:1px solid rgba(221,216,201,.13); background:rgba(4,6,7,.45); }
@@ -351,8 +476,13 @@ function App() {
         @keyframes fog-float { from { transform:translate3d(-2%,1%,0); opacity:.18; } to { transform:translate3d(2%,-1%,0); opacity:.42; } }
         @keyframes beam-breathe { from { opacity:.12; transform:rotate(-1deg); } to { opacity:.33; transform:rotate(1.3deg); } }
         @keyframes slow-glint { 0%,70% { transform:translateX(-75%); opacity:0; } 80% { opacity:.4; } 100% { transform:translateX(75%); opacity:0; } }
+        @keyframes wind-sweep-one { from { transform:translate3d(-7%,2%,0) rotate(-8deg); } to { transform:translate3d(7%,-3%,0) rotate(-5deg); } }
+        @keyframes wind-sweep-two { from { transform:translate3d(6%,-3%,0) rotate(-5deg) scaleX(1); } to { transform:translate3d(-8%,2%,0) rotate(-10deg) scaleX(1.08); } }
+        @keyframes wind-sweep-three { from { transform:translate3d(-5%,1%,0) rotate(-10deg) scaleX(1.04); } to { transform:translate3d(8%,-2%,0) rotate(-6deg) scaleX(.97); } }
+        @keyframes wind-grain-drift { from { transform:translate3d(-2%,1%,0); } to { transform:translate3d(2%,-1%,0); } }
         @supports (height: 100svh) { .hero { min-height:min(880px,100svh); } }
         @media (max-width: 900px) {
+          .edition-market-details[open] .edition-market-links { left:auto; right:0; }
           .collection__hero { grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr); gap:35px; }
           .edition-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
           .edition-card { min-height:230px; }
@@ -379,6 +509,7 @@ function App() {
           .story-paragraph:first-child::first-letter { font-size:4.6rem; }
           .story-image { margin:58px auto; }
           .story-image__frame { height:clamp(310px,93vw,420px); }
+          .story-image--loop .story-image__frame { height:228px; min-height:228px; }
           .story-image__photo { object-position:center; }
           .story-image__copy { left:20px; right:20px; bottom:22px; }
           .story-image__copy p { font-size:31px; }
@@ -394,6 +525,7 @@ function App() {
           .edition-section__head { display:block; }
           .edition-section__head > p { margin-top:12px; text-align:left; }
           .edition-grid { grid-template-columns:1fr; }
+          .edition-market-details[open] .edition-market-links { width:min(320px,calc(100vw - 48px)); right:0; left:auto; }
           .edition-card { min-height:0; }
           .edition-description { min-height:0; }
           .direct-row { grid-template-columns:1fr; }
@@ -401,7 +533,8 @@ function App() {
         }
         @media (prefers-reduced-motion: reduce) {
           html { scroll-behavior:auto; }
-          .hero-photo,.hero-fallback__beam,.hero-fog,.hero-beam,.story-image__photo,.story-image__fog,.collection__fog,.reader-ending::before { animation:none !important; }
+          .hero-photo,.hero-fallback__beam,.hero-fog,.hero-beam,.story-image__photo,.story-image__fog,.collection__fog,.reader-ending::before,.wind-thread,.wind-grain { animation:none !important; }
+          .wind-overlay { opacity:.22; }
           .progress-fill,.action-link,.cover-stage__frame,.edition-card { transition:none !important; }
           .edition-card:hover,.action-link:hover,.cover-stage__frame:hover { transform:none; }
         }
@@ -409,6 +542,13 @@ function App() {
 
       <a className="skip-link" href="#story">Skip to story</a>
       <div className="progress-track" aria-hidden="true"><div className="progress-fill" style={{ width: `${scrollProgress * 100}%` }} /></div>
+      <div className="wind-overlay" aria-hidden="true">
+        <span className="wind-thread wind-thread--one" />
+        <span className="wind-thread wind-thread--two" />
+        <span className="wind-thread wind-thread--three" />
+        <span className="wind-thread wind-thread--four" />
+        <span className="wind-grain" />
+      </div>
 
       <nav className="site-nav" aria-label="Main navigation">
         <div className="nav-inner">
@@ -480,7 +620,7 @@ function App() {
 
       <section id="book" className="collection" aria-labelledby="collection-title">
         <div className="collection__backdrop" aria-hidden="true">
-          <img src={VISUALS.storm} alt="" loading="lazy" decoding="async" onError={(event) => { event.currentTarget.classList.add('image-failed'); }} />
+          <img src={VISUALS.hero} alt="" loading="lazy" decoding="async" onError={(event) => { event.currentTarget.classList.add('image-failed'); }} />
         </div>
         <div className="collection__veil" aria-hidden="true" />
         <div className="collection__fog" aria-hidden="true" />
@@ -520,10 +660,10 @@ function App() {
               <p>Release dates and availability vary by format and marketplace. Links open the relevant store in a new tab.</p>
             </div>
             <div className="edition-grid">
-              <EditionCard eyebrow="Digital · Kindle" title="eBook" description="Read on a Kindle device or with the free Kindle app." status="Pre-order · October 15, 2026" href={BOOK_LINKS.kindle} action="Pre-order on Amazon" featured />
-              <EditionCard eyebrow="Print · Paperback" title="Paperback" description="The collection in a traditional printed edition." status="Release · October 18, 2026" href={BOOK_LINKS.paperback} action="Find on Amazon" />
-              <EditionCard eyebrow="Print · Hardcover" title="Hardcover" description="A durable edition for your shelf or collection." status="Available internationally" href={BOOK_LINKS.hardcover} action="Buy hardcover" />
-              <EditionCard eyebrow="Digital · Google Play" title="Google Play Books" description="Read in Google Play Books on supported devices." status={isConfiguredUrl(BOOK_LINKS.googlePlay) ? 'Available on Google Play' : 'Coming soon'} href={BOOK_LINKS.googlePlay} action="Read on Google Play" />
+              <EditionCard eyebrow="Digital · Kindle" title="eBook" description="Read on a Kindle device or with the free Kindle app." status="Pre-order · October 15, 2026" storeLinks={BOOK_LINKS.kindleMarkets} action="Pre-order on Amazon · US" featured expandMarkets quickMarketCount={4} />
+              <EditionCard eyebrow="Print · Paperback" title="Paperback" description="The collection in a traditional printed edition." status="Release · October 18, 2026" storeLinks={BOOK_LINKS.paperbackMarkets} note="The Amazon listing will be added when the paperback is live." />
+              <EditionCard eyebrow="Print · Hardcover" title="Hardcover" description="A durable case-laminate edition for your shelf or collection." status="Available internationally" storeLinks={BOOK_LINKS.hardcoverMarkets} action="Buy hardcover · US store" expandMarkets note="Choose an available Amazon marketplace when purchasing." />
+              <EditionCard eyebrow="Digital · Google Play" title="Google Play Books" description="Read in Google Play Books on supported devices." status={isConfiguredUrl(BOOK_LINKS.googlePlay) ? 'Available on Google Play' : 'Pending review'} href={BOOK_LINKS.googlePlay} action="Read on Google Play" note="The listing will be linked once Google Play approves and publishes it." />
             </div>
           </section>
 
@@ -531,12 +671,12 @@ function App() {
             <section className="direct-panel" aria-labelledby="india-orders-title">
               <p className="eyebrow">For readers in India</p>
               <h3 id="india-orders-title">A signed copy, from the author.</h3>
-              <p>Interested in a locally printed hardcover? Send an enquiry for current availability, pricing, and shipping before placing your order.</p>
+              <p>Interested in a locally fulfilled hardcover? Send a no-obligation request. I’ll confirm availability, the full price including shipping, and the dispatch estimate before asking you to pay.</p>
               <div className="direct-panel__actions">
-                <ActionLink href={BOOK_LINKS.indiaHardcoverOrderForm} variant="outline">Hardcover enquiry</ActionLink>
-                {hasIndiaHardcoverCheckout && <ActionLink href={BOOK_LINKS.indiaHardcoverCheckout}>Order hardcover</ActionLink>}
+                <ActionLink href={BOOK_LINKS.indiaHardcoverOrderForm} variant="outline">Request a signed hardcover</ActionLink>
+                {hasIndiaHardcoverCheckout && <ActionLink href={BOOK_LINKS.indiaHardcoverCheckout}>Pay for confirmed order</ActionLink>}
                 {KDP_SELECT_ENROLLED === false && hasIndiaDigitalCheckout && <ActionLink href={BOOK_LINKS.indiaDigitalCheckout} variant="outline">Buy eBook direct</ActionLink>}
-                {KDP_SELECT_ENROLLED === false && !hasIndiaDigitalCheckout && isConfiguredUrl(BOOK_LINKS.indiaDigitalOrderForm) && <ActionLink href={BOOK_LINKS.indiaDigitalOrderForm} variant="outline">eBook enquiry</ActionLink>}
+                {KDP_SELECT_ENROLLED === false && !hasIndiaDigitalCheckout && isConfiguredUrl(BOOK_LINKS.indiaDigitalOrderForm) && <ActionLink href={BOOK_LINKS.indiaDigitalOrderForm} variant="outline">Ask about direct eBook</ActionLink>}
               </div>
             </section>
             {hasNewsletter && (
@@ -553,7 +693,7 @@ function App() {
             <p className="author-footer__name">Soumik Halder</p>
             <p className="author-footer__title">The Things We Keep</p>
             <a className="author-footer__about" href="/about">About the author ↗</a>
-            <p className="image-credits">Atmospheric photographs via Unsplash: <a href="https://unsplash.com/photos/a-lighthouse-surrounded-by-a-huge-wave-in-the-ocean-NcociWzk23A" target="_blank" rel="noreferrer noopener">Marcus Woodbridge</a>, <a href="https://unsplash.com/photos/grungy-industrial-hallway-with-a-closed-metal-door-1BlWCk0on4U" target="_blank" rel="noreferrer noopener">Turquo Cabbit</a>, <a href="https://unsplash.com/photos/black-spiral-staircase-inside-house-gg1VLHHgxug" target="_blank" rel="noreferrer noopener">Sung Jin Cho</a>, and <a href="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA" target="_blank" rel="noreferrer noopener">Thanh Nguyen</a>.</p>
+            <p className="image-credits">Atmospheric photographs via Unsplash: <a href="https://unsplash.com/photos/dark-stormy-clouds-over-a-rough-ocean-at-night-qOkC7tHW_54" target="_blank" rel="noreferrer noopener">Heamosoo Kim</a>, <a href="https://unsplash.com/photos/a-rusty-metal-door-secured-with-a-padlock-TIbcWQjYYgA" target="_blank" rel="noreferrer noopener">Sergej Karpow</a>, <a href="https://unsplash.com/photos/a-large-metal-spiral-staircase-AJBO97kxCUU" target="_blank" rel="noreferrer noopener">Matt ODell</a>, <a href="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA" target="_blank" rel="noreferrer noopener">Thanh Nguyen</a>, and <a href="https://unsplash.com/photos/a-large-wave-hitting-a-lighthouse-on-a-stormy-day-j-ukn6RzOFo" target="_blank" rel="noreferrer noopener">Marcus Woodbridge</a>.</p>
             <p className="image-credits">© 2026 Soumik Halder · All rights reserved</p>
           </footer>
         </div>
