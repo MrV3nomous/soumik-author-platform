@@ -7,13 +7,11 @@ import { Fragment, useEffect, useState } from 'react';
  * This app deliberately does not collect payment details or store email addresses.
  * Payments and email subscriptions must use hosted checkout / signup pages.
  */
-// Set this to true if the Kindle eBook is enrolled in KDP Select, false if it is not.
-// Keep null until you've confirmed the setting; direct digital sale links stay hidden while unknown.
+// Set to true if the Kindle eBook is enrolled in KDP Select, false if it is not.
+// Keep null until confirmed; direct digital sale links stay hidden while unknown.
 const KDP_SELECT_ENROLLED = null;
 
 const BOOK_LINKS = {
-  // Exact KDP marketplace links supplied by the author. These resolve through Amazon's
-  // marketplace-link handler for the relevant store and format.
   kindleMarkets: [
     { label: 'US', href: 'https://kdp.amazon.com/amazon-dp-action/us/dualbookshelf.marketplacelink/B0HML17SSR' },
     { label: 'India', href: 'https://kdp.amazon.com/amazon-dp-action/in/dualbookshelf.marketplacelink/B0HML17SSR' },
@@ -29,9 +27,6 @@ const BOOK_LINKS = {
     { label: 'Canada', href: 'https://kdp.amazon.com/amazon-dp-action/ca/dualbookshelf.marketplacelink/B0HML17SSR' },
     { label: 'Mexico', href: 'https://kdp.amazon.com/amazon-dp-action/mx/dualbookshelf.marketplacelink/B0HML17SSR' },
   ],
-
-  // Exact KDP hardcover marketplace links supplied by the author. Amazon.in is not included
-  // because the KDP hardcover listing is not available for direct distribution there.
   hardcoverMarkets: [
     { label: 'US', href: 'https://kdp.amazon.com/amazon-dp-action/us/dualbookshelf.marketplacelink/B0HMST7VLV' },
     { label: 'UK', href: 'https://kdp.amazon.com/amazon-dp-action/uk/dualbookshelf.marketplacelink/B0HMST7VLV' },
@@ -45,65 +40,90 @@ const BOOK_LINKS = {
     { label: 'Belgium', href: 'https://kdp.amazon.com/amazon-dp-action/be/dualbookshelf.marketplacelink/B0HMST7VLV' },
     { label: 'Ireland', href: 'https://kdp.amazon.com/amazon-dp-action/ie/dualbookshelf.marketplacelink/B0HMST7VLV' },
   ],
-
-  // The paperback listing is not live yet. Add country-specific links once the listings exist.
   paperbackMarkets: [],
-  // Google Play Books listing is still under review. Add the final public URL after approval.
   googlePlay: '',
-
-  // Use this as an order enquiry only for now; don't collect payment until the local print price,
-  // stock, shipping, dispatch window, and refund terms are confirmed.
   indiaHardcoverOrderForm: 'https://forms.gle/LPfTPWX8zVFNH5Zj6',
-
-  // Keep direct digital purchase disabled while KDP Select status is unconfirmed or active.
   indiaDigitalOrderForm: 'https://forms.gle/YAsR1xGHD9Ptb7j58',
   indiaHardcoverCheckout: '',
   indiaDigitalCheckout: '',
-
-  // Optional, consent-based email signup form. Keep blank until ready.
   newsletterSignup: '',
 };
 
+// Each item is one reader paragraph. Paragraph boundaries are intentionally paced.
 const STORY = [
-  'The first thud struck the heavy steel door with the sickening finality of a hammer descending upon a fractured bone.',
-  'A second blow followed, sharper and infinitely closer. Its violent tremor reverberated through the salt-stained ironwork, settling deep within the marrow of the lighthouse. By the third resounding strike, Jack was violently awake. His heart hammered against his ribs like a trapped bird, his body jolting against the mildewed mattress as though the storm’s lightning had bypassed the thick stone walls to claw directly through his chest.',
-  'His trembling hand swept blindly across the cluttered desk, grazing a forest of empty vodka bottles—glass monuments to his own slow decay—before his fingers closed around the wire frames of his spectacles. The insulated deafness of his drunken slumber shattered under the unrelenting scream of the gale outside. Jagged, purplish veins of lightning slashed the bruised sky, momentarily illuminating the perilous cliffs far below, where the black, churning ocean gnashed at the rocks like an enraged leviathan starved for flesh. His cramped cabin, corroded with rust and perpetually choked by the cloying stench of brine, remained a fragile, blind cocoon suspended precariously within the howling maelstrom.',
-  'Jack’s ears had long grown fluent in the unforgiving vocabulary of the tempest. He had forcibly accustomed his mind to the mournful shriek of the wind and the ceaseless, rhythmic pounding of the tide. He yawned, his limbs profoundly heavy, weighed down by a toxic amalgamation of residual spirits and an encroaching, formless despair. Then, another thud echoed. It was louder this time, possessing a rhythmic, almost predatory insistence that demanded absolute acknowledgment.',
-  'Scowling into the oppressive gloom, he hooked his round glasses over his ears and struck his heavy brass lighter. A hesitant flame kissed the charred wick of his oil lamp, and the room shivered into a sickly, yellow wakefulness. The glass bottles glinted in the dimness like a congregation of dead, accusatory eyes. The stagnant air reeked of stale tobacco, dried sea salt, and a quiet rot that seemed to emanate from Jack’s very pores. When the thud persisted, violently shaking the rusted iron hinges, whatever meagre patience Jack still possessed completely eroded, replaced by a sudden, irrational flare of anger that masked his underlying terror.',
-  'He crossed the uneven floorboards, his bare feet registering the freezing dampness of the wood, unlatched the heavy deadbolt, and hauled the iron door inward. He braced himself, expecting the wind to strike him with a physical barrage of icy rain, yet the narrow, curving landing was utterly desolate. There was only the wrought-iron spiral staircase, coiling upward into the suffocating darkness and downward into the abyss like the fossilized spine of some colossal serpent. He peered up into the shifting shadows and down into the pitch-black well of the tower, finding nothing but the crushing gravitational weight of his own isolation. Frowning, his pulse quickening with a newfound paranoia, he forced the door shut against the howling drafts.',
-  'Time began to lose its structure, dripping away like cold, black tar as he sat back upon his cot. Acrid smoke from a half-burnt cigar thickened in the stagnant air, blurring the confines of the room into a suffocating grey haze that mirrored the fog creeping into his own mind. The lightning had become a mundane pulse, the thunder a morbid, deafening lullaby, yet his thoughts writhed with a creeping anxiety—a profound sense of wrongness that gnawed at the edges of his sanity. Before the heavy, merciful veil of sleep could reclaim him, another blow struck the door with deliberate, metallic finality, vibrating right through the floorboards.',
-  'Jack jolted upright. He watched the meagre flame of his lamp quiver violently on its dying wick, his breath catching in a paralyzed throat. Snatching the brass handle with white-knuckled desperation, he threw the door open once more to find the same mocking emptiness. A cold, serpentine dread began to coil tightly around his spine, whispering that he was no longer alone, or perhaps, far worse, that he was entirely alone with something born of his own fractured mind.',
-  'Driven by an intense, suffocating need to anchor himself to reality, he descended the spiralling iron steps toward the lower quarters. His hand trailed against the freezing, condensation-slicked wall until he came to a halt before his older coworker’s cabin. He pounded his fist frantically against Mr. Crawley’s door, desperate for the comforting mundane reality of another human voice.',
-  '"Crawley! Open the door, damn it!" Jack shouted into the suffocating belly of the storm.',
-  'The only reply was the hollow, mocking echo of his own voice spiralling down into the darkness. A profound, dizzying confusion rooted him to the spot. They had shared a meagre supper of salted beef and stale bread at the galley table scarcely an hour ago. He distinctly remembered the scrape of Crawley\'s fork, the older man’s unnerving, prolonged silence, and the hollow, vacant stare he had fixed upon the churning sea. Yet, the silence emanating from the room now felt ancient, undisturbed, as if the space had been sealed and lifeless for centuries.',
-  'Trembling, gripped by a sudden revulsion he could not entirely name, Jack climbed back to his own quarters. He bolted the heavy door with frantic haste and tended to the suffocating lamp, feeding it fresh kerosene until the flame hissed and flared with a desperate, blinding vigour. He sat rigidly on the edge of his cot, exhaling thick, nervous plumes of smoke until the room itself seemed to breathe in tandem with him—slow, restless, and unspeakably heavy.',
-  'Then, the phantom assault returned. It was so violent, so fiercely deliberate, it threatened to tear the heavy iron door entirely from its masonry frame. Jack froze, his blood turning to ice as the forgotten cigar slipped from his numb fingers to smoulder harmlessly on the damp floorboards. His heartbeat roared in his ears, deafening him to the thunder outside, and every step he took toward the threshold felt meticulously measured, an agonizing countdown to some unseen damnation waiting just beyond the wood.',
-  'He flung the door wide to the empty stairwell, ready to scream. But this time, cutting sharply through the chaotic, bass-heavy roar of the tempest, he heard them: faint, sodden footsteps climbing the iron grating above. They were not frantic, nor were they lost. Their rhythm was terrifyingly deliberate, unhurried, and deeply ritualistic—the sound of an executioner ascending the scaffold.',
-  'Seizing his flickering lamp, Jack pursued the phantom tread, his own breathing ragged and loud in the enclosed space. The heavy grilled hatch above stood ajar, swinging slightly on its hinges, leading out onto the fully exposed, circular gallery of the main light chamber. Outside, the storm reigned in its full, primordial fury, a monstrous, formless entity of wind and freezing water violently battering the steel parapets. His lamp died the instant he crossed the threshold, suffocated by the driving rain, leaving him blind in the howling void.',
-  'In one brilliant, skeletal flash of lightning that tore the sky asunder, he saw him. A solitary, drenched figure stood precariously at the very edge of the precipice, arms raised in silent, triumphant communion with the maelstrom, as if conducting the apocalyptic wrath of the heavens.',
-  'Jack took a tentative, trembling step across the slick metal grating, his mind desperately grasping for rational explanations that were rapidly disintegrating. Just as another flash illuminated the chaotic world, rapid, desperate footsteps slapped violently against the iron grating behind him. He whirled around to see Mr. Crawley bursting onto the gallery, sprinting toward the solitary, worshiping figure with a frantic urgency. The older man was as silent as carved stone, but his eyes were wide with a stark, bulging terror that bordered on absolute madness.',
-  '"Hey, Crawley! I’ve been pounding at your door!" Jack roared over the deafening shriek of the tempest, reaching out to grab the older man’s slick coat.',
-  'The old keeper did not flinch, nor did he acknowledge Jack’s presence by even a fraction of an inch. He collided squarely with Jack’s chest and passed seamlessly through his torso like a rush of cold, damp smoke. It left behind a sickening sensation of absolute nothingness, a chilling void where physical impact should have been.',
-  'Jack stumbled backward, gasping, looking down at his own trembling hands as Crawley rushed straight toward the man by the rail. Slowly, agonizingly, the conjuring figure lowered his arms and turned his head back to face the gallery, looking past the weeping, spectral form of Crawley directly at Jack.',
-  'Another jagged stroke of lightning etched the man’s face in stark, merciless, brilliant white. Jack’s breath caught in a paralyzed throat, his heart stopping altogether as he stared into a perfect, flawless mirror. It was his own exhausted, bloodshot eyes, his own hollow cheeks, and his own mouth twisted into a grotesque, knowing smirk—a malevolent doppelgänger reveling in the doom he had brought upon them. Before Jack’s shattered mind could process the impossibility, the smirking figure cast himself backward with a theatrical grace, plummeting into the churning, black abyss of the sea below.',
-  'Instantly, the ocean responded to the sacrifice. A monstrous, impossibly high wall of black water rose from the chaotic depths, a leviathan of crushing pressure and freezing sea-foam that struck the upper gallery with the force of an exploding mountain. It devoured the screaming, tragic spectre of Crawley in a singular, violent instant, wiping him from the walkway.',
-  'Jack stood rooted to the vibrating iron, bracing for the bone-crushing impact, watching the catastrophic spray and the deafening, watery chaos engulf the world around him. Yet, as the wave crashed through the gallery, tearing away the railings and shattering the great glass lenses behind him, Jack remained entirely, horrifyingly untouched. Not a single drop of rain clung to his face. The furious, hurricane-force winds completely failed to stir the fabric of his clothes.',
-  'The catastrophic, world-ending deluge had passed directly through his body, washing away the last fragile tether of his denial. It cemented the inescapable truth that he was no longer a living, breathing inhabitant of the waking world, but a fractured echo trapped in a purgatory of his own design.',
-  'Slowly, mechanically, completely devoid of hope or fear, he climbed back down the spiralling iron steps. That same grotesque, knowing smirk was now etched permanently, agonizingly across his own pale face, while the tempest hammered the lighthouse walls like skeletal fists demanding entry. He walked into his room, locked his heavy door against a threat that did not exist, poured a measure of bitter tonic with steady, perfectly translucent hands, and sank into his cot as the storm outside faded into a heavy, suffocating, eternal silence.',
-  'An hour later, the first thud struck his steel door with the sickening finality of a hammer descending upon a fractured bone.',
+  `The first thud struck the heavy steel door with the sickening finality of a hammer descending on bone.`,
+  `A second blow followed, and then a third. Jack awoke with a start, his heart racing beneath his ribs. He reached blindly across the cluttered desk, knocking against a row of empty vodka bottles before finding his spectacles. Outside, lightning flashed over the cliffs, revealing the black sea raging against the rocks below.`,
+  `His cabin stank of damp wood, stale tobacco and salt. Rust crept along the walls, and the wind found its way through every crack in the ancient tower. Jack had grown accustomed to the storm. He had lived in the lighthouse long enough for its nightly violence to become a kind of companionship, something to drown out the thoughts he preferred not to hear.`,
+  `But the knocking was new.`,
+  `He lit his oil lamp and sat listening. The flame trembled in the draught, casting long shadows across the bottles scattered beside his bed. Another blow shook the door.`,
+  `‘Who’s there?’ he called.`,
+  `Only the wind answered.`,
+  `With a curse, Jack crossed the room and drew back the deadbolt. He pulled the door open, expecting a rush of rain, but the narrow landing was empty. The iron staircase wound upwards towards the light chamber and descended into darkness below. He looked in both directions, then stepped out far enough to peer over the railing.`,
+  `Nothing.`,
+  `He shut the door and returned to his bed. Perhaps a loose shutter had broken free somewhere above him. Perhaps the storm had driven something against the tower. He tried to convince himself that either explanation was sufficient, but when he closed his eyes, he could still feel the vibration of the blows travelling through the floor.`,
+  `He had almost fallen asleep when the knocking came again.`,
+  `This time, he was on his feet before the third blow. He opened the door so quickly that it struck the wall behind it. The landing was empty, just as before.`,
+  `Jack stood there for a moment, staring into the darkness. Then he took his lamp and descended the staircase to Mr Crawley’s quarters.`,
+  `Crawley had been the lighthouse’s senior keeper for nearly thirty years. He was a quiet, peculiar man who rarely spoke about his past, but Jack had come to rely on his presence. They had eaten supper together scarcely an hour earlier, sitting across from each other at the galley table while rain rattled against the windows. Jack remembered the older man staring out at the sea, turning his fork between his fingers without eating much.`,
+  `He knocked on Crawley’s door.`,
+  `‘Crawley! Open up.’`,
+  `No answer.`,
+  `He knocked again, harder this time. The sound travelled down the stairwell and returned to him in a thin, hollow echo.`,
+  `‘Come on, old man. I know you’re in there.’`,
+  `He tried the handle. The door did not move.`,
+  `Jack waited, listening for footsteps on the other side, but there was nothing. He remembered Crawley complaining about a pain in his chest that evening, and for a moment he wondered whether something had happened to him. Yet he could not bring himself to force the door open. The storm, the knocking and the unnatural silence had begun to unsettle him, and he wanted nothing more than to return to his own room.`,
+  `He climbed back upstairs, bolted his door and poured himself a measure of vodka. His hands had begun to shake. He drank, lit a cigar and sat on the edge of his bed, watching the lamp.`,
+  `The next blow nearly tore the door from its hinges.`,
+  `Jack sprang up, knocking the bottle from the desk. It shattered against the floor, and the smell of spirits rose sharply into the room. He stared at the door, waiting for another strike.`,
+  `It came.`,
+  `He seized the handle and flung the door open.`,
+  `The stairwell lay empty. Beyond the railing, the darkness seemed deeper than before. Jack was about to retreat when he heard a sound above him.`,
+  `Footsteps.`,
+  `They moved slowly across the iron grating, descending from the direction of the light chamber. Each step rang clearly through the tower, unhurried and steady, as though whoever was approaching had all the time in the world.`,
+  `Jack lifted his lamp and began to climb.`,
+  `At the top, the heavy hatch stood ajar. Wind drove rain through the opening, and the flame in his lamp guttered as he stepped onto the gallery surrounding the great lantern room. The sea was almost invisible beneath the storm. Lightning flickered behind the clouds, briefly illuminating the waves far below.`,
+  `Then the sky flashed white.`,
+  `A man stood at the edge of the gallery, his back to Jack, his arms raised towards the sea. His clothes clung to his body, and water streamed from his hair. He stood so close to the railing that a single misstep would send him plunging into the darkness.`,
+  `‘Hey!’ Jack shouted. ‘Get away from there!’`,
+  `The figure did not move.`,
+  `Jack took a step forwards. The wind tore at his clothes, and the lamp went out in his hand. He stumbled against the railing, cursing, and reached for the man.`,
+  `Before he could touch him, another set of footsteps came pounding up the stairs.`,
+  `‘Crawley?’`,
+  `The older keeper emerged onto the gallery. His face was pale, and his eyes were fixed on the man at the edge. He seemed not to notice Jack at all.`,
+  `‘Crawley, what the hell is going on?’`,
+  `Jack caught the older man by the shoulder. His hand passed straight through him. For an instant, Jack felt nothing but a strange coldness, as though he had plunged his arm into deep water. He staggered backwards. Crawley continued towards the railing without looking round.`,
+  `Lightning flashed again. Jack saw the man at the edge turn. It was his own face. The same hollow cheeks, the same bloodshot eyes, the same small scar beside his mouth. Yet the expression was unfamiliar. The man was smiling, not with amusement but with the quiet satisfaction of someone who had been waiting a very long time.`,
+  `Jack could not move. The figure looked directly at him, then stepped backwards over the railing. He vanished into the sea.`,
+  `A moment later, a great wave rose from the darkness below. It struck the lighthouse with a roar, sweeping across the gallery and tearing the iron railing from its supports. Glass shattered behind Jack. The force of the water swallowed Crawley, carrying him into the night.`,
+  `Jack stood waiting for the impact. It never came. The water passed through him. He looked down at his hands. They were pale and almost transparent in the faint light from the lantern room. Rain fell through his fingers. The wind moved through his clothes without stirring them.`,
+  `He turned towards the stairs, and something in him finally gave way.`,
+  `Jack descended the staircase. The storm raged around him, but he no longer felt the cold. He returned to his cabin, shut the door and sat on the edge of his bed. His broken bottle lay on the floor, its contents spreading through the cracks between the boards. He stared at it for a long time before lying down.`,
+  `Outside, the sea continued to batter the cliffs. The lantern revolved above him, sending its pale beam across the black water. An hour later, the first thud struck his steel door with the sickening finality of a hammer descending upon a fractured bone.`,
+  `Jack opened his eyes.`,
 ];
 
 const isConfiguredUrl = (url) => typeof url === 'string' && /^https?:\/\//i.test(url.trim());
 
 const VISUALS = {
-  // Image URLs are taken from specific free Unsplash photo pages, rather than guessed IDs.
-  // Fallback gradients remain in place if a remote host is unavailable.
   hero: 'https://images.unsplash.com/photo-1758301064875-b46ec97564dd?auto=format&fit=crop&w=2400&q=88',
   sea: 'https://images.unsplash.com/photo-1766759622568-e27b4128af95?auto=format&fit=crop&w=1800&q=86',
   door: 'https://images.unsplash.com/photo-1768807086823-d80d37e06b63?auto=format&fit=crop&w=1800&q=86',
   stairs: 'https://images.unsplash.com/photo-1667099761510-dc70ac156c43?auto=format&fit=crop&w=1800&q=86',
   wave: 'https://images.unsplash.com/photo-1570187853757-b599d3fc5fbd?auto=format&fit=crop&w=2000&q=86',
 };
+
+const REVEAL_BEATS = new Set([
+  'But the knocking was new.',
+  'Only the wind answered.',
+  'Nothing.',
+  'No answer.',
+  'The next blow nearly tore the door from its hinges.',
+  'It came.',
+  'Footsteps.',
+  'Then the sky flashed white.',
+  'He turned towards the stairs, and something in him finally gave way.',
+  'Jack opened his eyes.',
+]);
 
 function ArrowUpRight() {
   return (
@@ -126,6 +146,7 @@ function EditionCard({ eyebrow, title, description, status, href, storeLinks = [
   const availableStores = storeLinks.filter((store) => isConfiguredUrl(store.href));
   const quickOtherStores = availableStores.slice(1, quickMarketCount);
   const additionalStores = availableStores.slice(quickMarketCount);
+
   return (
     <article className={`edition-card ${featured ? 'edition-card--featured' : ''}`}>
       <p className="eyebrow">{eyebrow}</p>
@@ -235,66 +256,26 @@ function App() {
   const hasIndiaHardcoverCheckout = isConfiguredUrl(BOOK_LINKS.indiaHardcoverCheckout);
   const hasIndiaDigitalCheckout = isConfiguredUrl(BOOK_LINKS.indiaDigitalCheckout);
 
+  // Place imagery after story passages, not hard-coded paragraph numbers. This keeps
+  // the visual rhythm correct when a paragraph is edited or the story is repaced.
   const storyVisuals = {
-    2: (
-      <StoryImage
-        src={VISUALS.sea}
-        type="sea"
-        number="I"
-        kicker="Beyond the glass"
-        caption="Outside, the sea had become a single moving darkness."
-        creditUrl="https://unsplash.com/photos/dark-stormy-clouds-over-a-rough-ocean-at-night-qOkC7tHW_54"
-      />
+    [STORY.findIndex((paragraph) => paragraph.startsWith('A second blow followed,'))]: (
+      <StoryImage src={VISUALS.sea} type="sea" number="I" kicker="Beyond the glass" caption="Outside, the sea had become a single moving darkness." creditUrl="https://unsplash.com/photos/dark-stormy-clouds-over-a-rough-ocean-at-night-qOkC7tHW_54" />
     ),
-    5: (
-      <StoryImage
-        src={VISUALS.door}
-        type="door"
-        number="II"
-        kicker="The first silence"
-        caption="The door opened. Nothing waited on the other side."
-        creditUrl="https://unsplash.com/photos/a-rusty-metal-door-secured-with-a-padlock-TIbcWQjYYgA"
-      />
+    [STORY.findIndex((paragraph) => paragraph.startsWith('With a curse, Jack crossed the room'))]: (
+      <StoryImage src={VISUALS.door} type="door" number="II" kicker="The first silence" caption="The door opened. Nothing waited on the other side." creditUrl="https://unsplash.com/photos/a-rusty-metal-door-secured-with-a-padlock-TIbcWQjYYgA" />
     ),
-    13: (
-      <StoryImage
-        src={VISUALS.stairs}
-        type="stairs"
-        number="III"
-        kicker="Above him"
-        caption="Then came the sound of footsteps on the iron grating."
-        creditUrl="https://unsplash.com/photos/a-large-metal-spiral-staircase-AJBO97kxCUU"
-      />
+    [STORY.findIndex((paragraph) => paragraph.startsWith('They moved slowly across the iron grating'))]: (
+      <StoryImage src={VISUALS.stairs} type="stairs" number="III" kicker="Above him" caption="Then came the sound of footsteps on the iron grating." creditUrl="https://unsplash.com/photos/a-large-metal-spiral-staircase-AJBO97kxCUU" />
     ),
-    15: (
-      <StoryImage
-        src={VISUALS.hero}
-        type="storm"
-        number="IV"
-        kicker="The light chamber"
-        caption="At the edge of the world, a figure waited in the storm."
-        creditUrl="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA"
-      />
+    [STORY.findIndex((paragraph) => paragraph.startsWith('At the top, the heavy hatch stood ajar'))]: (
+      <StoryImage src={VISUALS.hero} type="storm" number="IV" kicker="The light chamber" caption="At the edge of the world, a figure waited in the storm." creditUrl="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA" />
     ),
-    21: (
-      <StoryImage
-        src={VISUALS.wave}
-        type="wave"
-        number="V"
-        kicker="The sea answered"
-        caption="The wave came. Jack remained untouched."
-        creditUrl="https://unsplash.com/photos/a-large-wave-hitting-a-lighthouse-on-a-stormy-day-j-ukn6RzOFo"
-      />
+    [STORY.findIndex((paragraph) => paragraph.startsWith('A moment later, a great wave rose'))]: (
+      <StoryImage src={VISUALS.wave} type="wave" number="V" kicker="The sea answered" caption="The wave came. Jack remained untouched." creditUrl="https://unsplash.com/photos/a-large-wave-hitting-a-lighthouse-on-a-stormy-day-j-ukn6RzOFo" />
     ),
-    24: (
-      <StoryImage
-        src={VISUALS.hero}
-        type="loop"
-        number="VI"
-        kicker="The night repeats"
-        caption="The light kept turning over the black water."
-        creditUrl="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA"
-      />
+    [STORY.findIndex((paragraph) => paragraph.startsWith('Jack descended the staircase'))]: (
+      <StoryImage src={VISUALS.hero} type="loop" number="VI" kicker="The night repeats" caption="The light kept turning over the black water." creditUrl="https://unsplash.com/photos/lighthouse-standing-on-rocks-in-dark-stormy-sea-jDlBVKsgfVA" />
     ),
   };
 
@@ -306,42 +287,41 @@ function App() {
         body { margin: 0; background: #080a0b; }
         .site-shell { min-height: 100vh; overflow-x: clip; background: #080a0b; color: #e9e6de; }
         .site-shell ::selection { background:#797366; color:#fffdf7; }
+        .site-shell * { box-sizing: border-box; }
         .skip-link { position:absolute; z-index:200; top:-100px; left:20px; padding:12px 16px; color:#080a0b; background:#f1eee6; text-decoration:none; font:600 10px/1.4 Inter,sans-serif; text-transform:uppercase; letter-spacing:.14em; }
         .skip-link:focus { top:16px; }
-        .site-shell * { box-sizing: border-box; }
-        .progress-track { position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 2px; pointer-events: none; background: transparent; }
-        .progress-fill { height: 100%; background: #d7cfba; box-shadow: 0 0 14px rgba(219,210,186,.4); transition: width .08s linear; }
-        /* A barely visible wind layer drifts across the viewport without intercepting clicks. */
+        .progress-track { position:fixed; z-index:100; top:0; left:0; width:100%; height:2px; pointer-events:none; }
+        .progress-fill { height:100%; background:#d7cfba; box-shadow:0 0 14px rgba(219,210,186,.4); transition:width .08s linear; }
         .wind-overlay { position:fixed; z-index:9; inset:0; overflow:hidden; pointer-events:none; opacity:.78; mix-blend-mode:screen; }
         .wind-thread { position:absolute; left:-75%; width:250%; height:clamp(90px,18vh,230px); border-radius:50%; filter:blur(19px); transform:rotate(-8deg); will-change:transform; }
-        .wind-thread--one { top:5%; background:radial-gradient(ellipse at 50% 50%,rgba(197,211,207,.105) 0%,rgba(197,211,207,.035) 27%,transparent 65%),linear-gradient(180deg,transparent 34%,rgba(204,214,209,.04) 51%,transparent 70%); animation:wind-sweep-one 47s ease-in-out infinite alternate; }
+        .wind-thread--one { top:5%; background:radial-gradient(ellipse at 50% 50%,rgba(197,211,207,.105),rgba(197,211,207,.035) 27%,transparent 65%),linear-gradient(180deg,transparent 34%,rgba(204,214,209,.04) 51%,transparent 70%); animation:wind-sweep-one 47s ease-in-out infinite alternate; }
         .wind-thread--two { top:31%; height:clamp(100px,21vh,265px); opacity:.68; background:radial-gradient(ellipse at 46% 48%,rgba(186,202,199,.09),transparent 62%),linear-gradient(180deg,transparent 32%,rgba(196,208,204,.045) 49%,transparent 71%); animation:wind-sweep-two 59s ease-in-out infinite alternate; }
         .wind-thread--three { top:61%; height:clamp(85px,16vh,205px); opacity:.54; background:radial-gradient(ellipse at 54% 50%,rgba(192,205,203,.085),transparent 63%),linear-gradient(180deg,transparent 34%,rgba(196,208,204,.035) 49%,transparent 69%); animation:wind-sweep-three 53s ease-in-out infinite alternate; }
         .wind-thread--four { top:82%; height:clamp(65px,12vh,160px); opacity:.48; filter:blur(26px); background:radial-gradient(ellipse at 50% 50%,rgba(177,193,190,.09),transparent 65%); animation:wind-sweep-one 67s ease-in-out infinite alternate-reverse; }
         .wind-grain { position:absolute; inset:-30%; opacity:.1; background:repeating-linear-gradient(168deg,transparent 0 54px,rgba(218,226,219,.12) 55px,transparent 57px,transparent 116px); mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent); animation:wind-grain-drift 36s linear infinite; }
-        .site-nav { position: absolute; z-index: 20; top: 0; left: 0; width: 100%; border-bottom: 1px solid rgba(255,255,255,.1); background: linear-gradient(180deg,rgba(4,6,7,.76),rgba(4,6,7,.16)); }
-        .nav-inner { max-width: 1440px; margin: 0 auto; padding: 24px clamp(20px,5vw,74px); display:flex; align-items:center; justify-content:space-between; gap:20px; }
+        .site-nav { position:absolute; z-index:20; top:0; left:0; width:100%; border-bottom:1px solid rgba(255,255,255,.1); background:linear-gradient(180deg,rgba(4,6,7,.76),rgba(4,6,7,.16)); }
+        .nav-inner { max-width:1440px; margin:0 auto; padding:24px clamp(20px,5vw,74px); display:flex; align-items:center; justify-content:space-between; gap:20px; }
         .brand-lockup { display:flex; flex-direction:column; gap:5px; text-decoration:none; }
-        .brand-name { font: 600 10px/1.2 Inter, sans-serif; letter-spacing:.25em; text-transform:uppercase; color:#f1eee6; }
-        .brand-subtitle { font: italic 15px/1.1 'Crimson Pro', serif; color:#bbb7ad; }
+        .brand-name { font:600 10px/1.2 Inter,sans-serif; letter-spacing:.25em; text-transform:uppercase; color:#f1eee6; }
+        .brand-subtitle { font:italic 15px/1.1 'Crimson Pro',Georgia,serif; color:#bbb7ad; }
         .nav-links { display:flex; align-items:center; gap:clamp(16px,3vw,38px); }
         .nav-links a { color:#ddd9ce; text-decoration:none; font:500 9px/1.3 Inter,sans-serif; letter-spacing:.19em; text-transform:uppercase; transition:color .2s; }
         .nav-links a:hover { color:white; }
-        .hero { position:relative; isolation:isolate; min-height:min(880px,100svh); min-height: min(880px, 100vh); display:flex; align-items:flex-end; background:#101517; overflow:hidden; }
+        .hero { position:relative; isolation:isolate; min-height:min(880px,100vh); display:flex; align-items:flex-end; background:#101517; overflow:hidden; }
         .hero-media { position:absolute; z-index:0; inset:0; overflow:hidden; }
-        .hero-fallback { position:absolute; z-index:0; inset:0; overflow:hidden; background:radial-gradient(ellipse at 75% 28%,rgba(151,164,165,.24),transparent 34%),linear-gradient(180deg,#172125 0%,#080c0e 75%); }
-        .hero-photo { position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover; object-position:center 46%; opacity:.88; animation: slow-zoom 34s ease-in-out infinite alternate; }
+        .hero-fallback { position:absolute; inset:0; overflow:hidden; background:radial-gradient(ellipse at 75% 28%,rgba(151,164,165,.24),transparent 34%),linear-gradient(180deg,#172125 0%,#080c0e 75%); }
+        .hero-photo { position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover; object-position:center 46%; opacity:.88; animation:slow-zoom 34s ease-in-out infinite alternate; }
         .hero-photo.image-failed { display:none; }
         .hero-fallback__tower { position:absolute; bottom:-5%; right:17%; width:clamp(75px,11vw,150px); height:57%; background:linear-gradient(90deg,#0a0e10,#262d30 48%,#080c0e); clip-path:polygon(24% 0,76% 0,100% 100%,0 100%); opacity:.8; filter:drop-shadow(0 0 24px rgba(0,0,0,.8)); }
         .hero-fallback__lantern { position:absolute; top:34%; right:16.8%; width:clamp(80px,12vw,165px); height:clamp(30px,4vw,54px); border:1px solid rgba(219,214,190,.45); background:linear-gradient(180deg,#363d3a,#111718); box-shadow:0 0 44px rgba(222,214,184,.2); }
-        .hero-fallback__beam { position:absolute; top:34%; right:23%; width:65%; height:31%; clip-path:polygon(0 0,100% 40%,100% 62%,0 100%); transform-origin:right center; background:linear-gradient(90deg,rgba(226,218,188,.1),transparent); animation: beam-breathe 12s ease-in-out infinite alternate; }
-        .hero-veil { position:absolute; inset:0; background:linear-gradient(90deg,rgba(5,7,8,.94) 0%,rgba(5,7,8,.78) 31%,rgba(5,7,8,.32) 65%,rgba(5,7,8,.1) 100%),linear-gradient(0deg,#080a0b 0%,rgba(8,10,11,.08) 38%,rgba(4,6,7,.25) 100%); }
+        .hero-fallback__beam { position:absolute; top:34%; right:23%; width:65%; height:31%; clip-path:polygon(0 0,100% 40%,100% 62%,0 100%); transform-origin:right center; background:linear-gradient(90deg,rgba(226,218,188,.1),transparent); animation:beam-breathe 12s ease-in-out infinite alternate; }
+        .hero-veil { position:absolute; inset:0; background:linear-gradient(90deg,rgba(5,7,8,.94),rgba(5,7,8,.78) 31%,rgba(5,7,8,.32) 65%,rgba(5,7,8,.1)),linear-gradient(0deg,#080a0b,rgba(8,10,11,.08) 38%,rgba(4,6,7,.25)); }
         .hero-fog { position:absolute; inset:-12%; pointer-events:none; opacity:.38; background:radial-gradient(ellipse at 62% 67%,rgba(200,205,199,.2),transparent 30%),radial-gradient(ellipse at 85% 55%,rgba(181,191,188,.12),transparent 24%); mix-blend-mode:screen; animation:fog-float 26s ease-in-out infinite alternate; }
-        .hero-beam { position:absolute; top:22%; right:6%; width:70%; height:30%; pointer-events:none; opacity:.22; clip-path:polygon(100% 0,100% 78%,0 100%,0 72%); transform-origin:100% 0; background:linear-gradient(180deg,rgba(225,220,199,.42),rgba(225,220,199,0)); animation: beam-breathe 19s ease-in-out infinite alternate; }
+        .hero-beam { position:absolute; top:22%; right:6%; width:70%; height:30%; pointer-events:none; opacity:.22; clip-path:polygon(100% 0,100% 78%,0 100%,0 72%); transform-origin:100% 0; background:linear-gradient(180deg,rgba(225,220,199,.42),rgba(225,220,199,0)); animation:beam-breathe 19s ease-in-out infinite alternate; }
         .hero-layout { position:relative; z-index:2; width:100%; max-width:1440px; margin:0 auto; padding:clamp(170px,23vh,240px) clamp(20px,8vw,118px) clamp(100px,13vh,150px); }
         .hero-copy { max-width:750px; }
         .hero-eyebrow { display:flex; align-items:center; gap:12px; color:#c1bba9; font:500 9px/1.4 Inter,sans-serif; letter-spacing:.26em; text-transform:uppercase; }
-        .hero-eyebrow::before { content:''; display:block; width:38px; height:1px; background:#c1bba9; opacity:.65; }
+        .hero-eyebrow::before { content:''; width:38px; height:1px; background:#c1bba9; opacity:.65; }
         .hero-title { margin:28px 0 0; color:#f3f0e8; font:500 clamp(4.2rem,10.3vw,9.7rem)/.79 'Crimson Pro',Georgia,serif; letter-spacing:-.055em; text-transform:uppercase; text-shadow:0 5px 40px rgba(0,0,0,.35); }
         .hero-title span { display:block; }
         .hero-title span:last-child { color:#c8c4b8; font-style:italic; font-weight:400; text-transform:none; letter-spacing:-.045em; margin-left:.06em; }
@@ -357,7 +337,7 @@ function App() {
         .action-link--outline:hover { border-color:#d9d2c0; color:white; background:rgba(255,255,255,.045); }
         .link-arrow { width:14px; height:14px; flex:0 0 auto; }
         .hero-note { position:absolute; z-index:3; right:clamp(20px,4vw,56px); bottom:70px; writing-mode:vertical-rl; color:rgba(236,232,220,.56); font:500 8px/1.4 Inter,sans-serif; letter-spacing:.23em; text-transform:uppercase; }
-        .hero-bottomline { position:absolute; z-index:4; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(225,220,200,.35),transparent); }
+        .hero-bottomline { position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(225,220,200,.35),transparent); }
         .section-heading { display:flex; align-items:center; gap:14px; color:#9d9a90; font:500 9px/1.5 Inter,sans-serif; text-transform:uppercase; letter-spacing:.24em; }
         .section-heading::before { content:''; width:30px; height:1px; background:#858174; }
         .story-intro { background:linear-gradient(180deg,#080a0b,#0b0e0f); border-bottom:1px solid rgba(255,255,255,.07); }
@@ -365,13 +345,17 @@ function App() {
         .story-intro h2 { max-width:700px; margin:19px auto 0; color:#e9e5dc; font:400 clamp(28px,3.7vw,45px)/1.1 'Crimson Pro',Georgia,serif; letter-spacing:-.02em; }
         .story-intro p { max-width:580px; margin:17px auto 0; color:#85857f; font:400 13px/1.8 Inter,sans-serif; }
         .story-article { max-width:1240px; margin:0 auto; padding:0 clamp(18px,3.5vw,44px); }
-        .reading-topline { display:flex; justify-content:space-between; align-items:center; gap:16px; max-width:68ch; margin:0 auto; padding:26px 0; color:#666b68; border-bottom:1px solid rgba(255,255,255,.07); font:500 8px/1.5 Inter,sans-serif; letter-spacing:.22em; text-transform:uppercase; }
+        .reading-topline { display:flex; justify-content:space-between; align-items:center; gap:16px; max-width:68ch; margin:0 auto; padding:26px 0; color:#777c77; border-bottom:1px solid rgba(255,255,255,.07); font:500 8px/1.5 Inter,sans-serif; letter-spacing:.22em; text-transform:uppercase; }
         .reading-topline span:last-child { text-align:right; }
         .story-copy { position:relative; padding-top:40px; }
-        .story-paragraph { max-width:68ch; margin:0 auto; color:#d0cec7; font:400 19px/1.9 'Crimson Pro',Georgia,serif; letter-spacing:.003em; text-indent:1.45em; }
+        .story-paragraph { max-width:66ch; margin:0 auto; color:#d0cec7; font:400 clamp(18px,1.25rem,20px)/1.86 'Crimson Pro',Georgia,serif; letter-spacing:.003em; text-indent:1.35em; overflow-wrap:break-word; hyphens:auto; text-wrap:pretty; }
         .story-paragraph + .story-paragraph { margin-top:1.25em; }
         .story-paragraph:first-child { text-indent:0; }
         .story-paragraph:first-child::first-letter { float:left; font:500 5.2rem/.78 'Crimson Pro',Georgia,serif; margin:.12em .12em 0 0; color:#e9e3d4; }
+        .story-paragraph--dialogue { margin-top:.75em !important; margin-bottom:.9em; text-indent:0; }
+        .story-paragraph--reveal { margin-top:1.8em !important; margin-bottom:1.8em; color:#ded7c7; text-indent:0; line-height:1.72; }
+        .story-paragraph--major-reveal { margin-top:2em !important; margin-bottom:2em; color:#e2ddd1; }
+        .story-paragraph--ending { margin-top:2.35em !important; padding-bottom:.25em; color:#e6dfcf; text-indent:0; }
         .story-image { width:100%; max-width:1100px; margin:clamp(62px,8vw,108px) auto; }
         .story-image__frame { position:relative; isolation:isolate; min-height:260px; height:clamp(280px,39vw,495px); overflow:hidden; background:#121718; border:1px solid rgba(218,212,196,.13); }
         .story-image__fallback { position:absolute; inset:0; background:radial-gradient(ellipse at 75% 25%,rgba(162,174,169,.2),transparent 28%),linear-gradient(135deg,#222b2c,#080b0c 70%); }
@@ -385,16 +369,15 @@ function App() {
         .story-image--loop { max-width:920px; margin-top:clamp(52px,6vw,76px); margin-bottom:clamp(52px,6vw,76px); }
         .story-image--loop .story-image__frame { height:clamp(220px,27vw,330px); min-height:200px; }
         .story-image--loop .story-image__photo { object-position:center 57%; }
-        .story-image__shade { position:absolute; inset:0; background:linear-gradient(90deg,rgba(4,7,8,.81),rgba(4,7,8,.08) 82%),linear-gradient(0deg,rgba(3,5,6,.8),transparent 58%); }
+        .story-image__shade { position:absolute; inset:0; background:linear-gradient(90deg,rgba(4,7,8,.81),rgba(4,7,8,.08) 82%),linear-gradient(0deg,rgba(3,5,6,.8),transparent 58%); pointer-events:none; }
         .story-image__fog { position:absolute; inset:-20%; opacity:.32; background:radial-gradient(ellipse at 40% 75%,rgba(203,208,198,.28),transparent 32%),linear-gradient(90deg,transparent,rgba(199,205,197,.08),transparent); animation:fog-float 22s ease-in-out infinite alternate; pointer-events:none; }
-        .story-image__copy { position:absolute; left:clamp(22px,5vw,56px); bottom:clamp(23px,4vw,46px); max-width:620px; z-index:2; }
+        .story-image__copy { position:absolute; left:clamp(22px,5vw,56px); right:clamp(22px,5vw,56px); bottom:clamp(23px,4vw,46px); max-width:620px; z-index:2; }
         .story-image__number { display:inline-flex; align-items:center; justify-content:center; width:29px; height:29px; border:1px solid rgba(223,218,201,.52); border-radius:50%; color:#e8e1d1; font:italic 14px/1 'Crimson Pro',serif; }
         .story-image__kicker { display:block; margin-top:17px; color:#c6beaa; font:500 9px/1.4 Inter,sans-serif; letter-spacing:.24em; text-transform:uppercase; }
         .story-image__copy p { margin:9px 0 0; max-width:540px; color:#f0ece3; font:italic 400 clamp(25px,3.7vw,43px)/1.05 'Crimson Pro',Georgia,serif; letter-spacing:-.015em; text-wrap:balance; }
         .story-image__credit { display:flex; justify-content:flex-end; padding-top:9px; }
-        .story-image__credit a { color:#515753; text-decoration:none; font:500 8px/1.5 Inter,sans-serif; letter-spacing:.08em; }
+        .story-image__credit a { color:#626862; text-decoration:none; font:500 8px/1.5 Inter,sans-serif; letter-spacing:.08em; }
         .story-image__credit a:hover { color:#a3a59d; }
-        .story-image__photo + .story-image__shade { pointer-events:none; }
         .reader-ending { position:relative; max-width:790px; margin:clamp(84px,11vw,140px) auto 108px; padding:clamp(35px,6vw,68px) clamp(22px,5vw,60px); text-align:center; border:1px solid rgba(210,205,191,.15); background:radial-gradient(ellipse at 50% 105%,rgba(111,130,133,.19),transparent 60%),linear-gradient(135deg,#151a1b,#080a0b 72%); overflow:hidden; }
         .reader-ending::before { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(115deg,transparent 20%,rgba(210,210,198,.06) 50%,transparent 80%); transform:translateX(-70%); animation:slow-glint 17s ease-in-out infinite; }
         .reader-ending__rule { width:90px; height:1px; margin:0 auto 22px; background:linear-gradient(90deg,transparent,#9e9b8c,transparent); }
@@ -433,7 +416,7 @@ function App() {
         .edition-section__head h3 { margin:10px 0 0; color:#eeeae1; font:400 clamp(28px,4vw,43px)/1.1 'Crimson Pro',Georgia,serif; }
         .edition-section__head > p { max-width:340px; margin:0; color:#757972; font:400 11px/1.7 Inter,sans-serif; text-align:right; }
         .edition-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
-        .edition-card { display:flex; min-height:255px; flex-direction:column; padding:22px; border:1px solid rgba(221,216,201,.12); background:linear-gradient(145deg,rgba(28,32,32,.62),rgba(5,7,8,.65)); transition:transform .24s ease,border-color .24s ease,background .24s ease; }
+        .edition-card { position:relative; display:flex; min-height:255px; min-width:0; flex-direction:column; padding:22px; border:1px solid rgba(221,216,201,.12); background:linear-gradient(145deg,rgba(28,32,32,.62),rgba(5,7,8,.65)); transition:transform .24s ease,border-color .24s ease,background .24s ease; }
         .edition-card:hover { transform:translateY(-4px); border-color:rgba(220,215,198,.37); background:linear-gradient(145deg,rgba(39,43,42,.72),rgba(5,7,8,.78)); }
         .edition-card--featured { border-color:rgba(216,207,183,.43); background:linear-gradient(145deg,rgba(55,56,49,.58),rgba(5,7,8,.74)); }
         .eyebrow { margin:0; color:#a29d90; font:500 8px/1.5 Inter,sans-serif; letter-spacing:.2em; text-transform:uppercase; }
@@ -442,14 +425,11 @@ function App() {
         .edition-status { margin:20px 0 0; padding-top:13px; color:#c2bcad; border-top:1px solid rgba(255,255,255,.09); font:500 8px/1.7 Inter,sans-serif; letter-spacing:.1em; text-transform:uppercase; }
         .edition-action { margin-top:15px; width:100%; min-height:43px; padding:12px 9px; font-size:8px; letter-spacing:.13em; }
         .edition-note { margin:13px 0 0; color:#656b66; font:400 9px/1.6 Inter,sans-serif; }
-
         .edition-markets { margin-top:auto; padding-top:18px; }
         .edition-markets__label { margin:0 0 10px; color:#7f827b; font:500 8px/1.4 Inter,sans-serif; letter-spacing:.15em; text-transform:uppercase; }
         .edition-market-links { display:flex; flex-wrap:wrap; gap:7px; }
-        .edition-market-links--quick { margin-top:9px; }
         .edition-market-links a { display:inline-flex; align-items:center; padding:8px 10px; border:1px solid rgba(222,216,199,.2); color:#ddd8cc; text-decoration:none; font:500 9px/1.3 Inter,sans-serif; letter-spacing:.04em; transition:background .2s,border-color .2s,color .2s; }
         .edition-market-links a:hover { border-color:rgba(222,216,199,.55); background:rgba(255,255,255,.055); color:#fff; }
-        /* The market picker floats above the grid; opening it never resizes the edition cards. */
         .edition-market-details { position:relative; z-index:5; margin-top:11px; }
         .edition-market-details summary { cursor:pointer; width:max-content; max-width:100%; color:#aaa99f; font:500 8px/1.6 Inter,sans-serif; letter-spacing:.07em; text-decoration:underline; text-decoration-color:rgba(222,216,199,.32); text-underline-offset:4px; list-style:none; }
         .edition-market-details summary::-webkit-details-marker { display:none; }
@@ -461,7 +441,7 @@ function App() {
         .edition-market-details:focus-within summary { color:#f2eee3; outline:1px solid rgba(222,216,199,.5); outline-offset:4px; }
         .direct-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:24px; }
         .direct-row:not(.direct-row--with-newsletter) .direct-panel { grid-column:1 / -1; }
-        .direct-panel { padding:clamp(22px,3vw,32px); border:1px solid rgba(221,216,201,.13); background:rgba(4,6,7,.45); }
+        .direct-panel { min-width:0; padding:clamp(22px,3vw,32px); border:1px solid rgba(221,216,201,.13); background:rgba(4,6,7,.45); }
         .direct-panel h3 { margin:13px 0 0; color:#e9e5dc; font:400 30px/1.1 'Crimson Pro',Georgia,serif; }
         .direct-panel > p:not(.eyebrow) { max-width:500px; margin:12px 0 0; color:#959790; font:400 12px/1.8 Inter,sans-serif; }
         .direct-panel__actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
@@ -469,7 +449,7 @@ function App() {
         .author-footer__name { color:#d8d4c8; font:500 9px/1.4 Inter,sans-serif; letter-spacing:.26em; text-transform:uppercase; }
         .author-footer__title { margin-top:8px; color:#777a73; font:italic 16px/1.4 'Crimson Pro',Georgia,serif; }
         .author-footer__about { display:inline-block; margin-top:14px; color:#888b83; font:500 8px/1.5 Inter,sans-serif; letter-spacing:.18em; text-decoration:none; text-transform:uppercase; }
-        .image-credits { margin-top:22px; color:#555b56; font:400 8px/1.8 Inter,sans-serif; }
+        .image-credits { margin-top:22px; color:#555b56; font:400 8px/1.8 Inter,sans-serif; overflow-wrap:anywhere; }
         .image-credits a { color:#777d76; text-decoration:none; }
         .image-credits a:hover { color:#d6d0c0; }
         @keyframes slow-zoom { from { transform:scale(1.03); } to { transform:scale(1.1); } }
@@ -480,39 +460,46 @@ function App() {
         @keyframes wind-sweep-two { from { transform:translate3d(6%,-3%,0) rotate(-5deg) scaleX(1); } to { transform:translate3d(-8%,2%,0) rotate(-10deg) scaleX(1.08); } }
         @keyframes wind-sweep-three { from { transform:translate3d(-5%,1%,0) rotate(-10deg) scaleX(1.04); } to { transform:translate3d(8%,-2%,0) rotate(-6deg) scaleX(.97); } }
         @keyframes wind-grain-drift { from { transform:translate3d(-2%,1%,0); } to { transform:translate3d(2%,-1%,0); } }
-        @supports (height: 100svh) { .hero { min-height:min(880px,100svh); } }
-        @media (max-width: 900px) {
+        @supports (height:100svh) { .hero { min-height:min(880px,100svh); } }
+        @media (max-width:900px) {
           .edition-market-details[open] .edition-market-links { left:auto; right:0; }
           .collection__hero { grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr); gap:35px; }
           .edition-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
           .edition-card { min-height:230px; }
           .hero-title { font-size:clamp(4.2rem,12vw,7rem); }
         }
-        @media (max-width: 640px) {
-          .nav-inner { padding:17px 18px; }
+        @media (max-width:640px) {
+          .nav-inner { padding:17px 18px; gap:12px; }
+          .brand-name { font-size:9px; }
           .brand-subtitle { font-size:13px; }
-          .nav-links { gap:14px; }
-          .nav-links a { font-size:8px; letter-spacing:.13em; }
+          .nav-links { gap:12px; }
+          .nav-links a { font-size:7px; letter-spacing:.1em; }
           .hero { min-height:790px; min-height:90svh; align-items:flex-end; }
           .hero-photo { object-position:62% center; opacity:.72; }
-          .hero-veil { background:linear-gradient(90deg,rgba(5,7,8,.78),rgba(5,7,8,.28)),linear-gradient(0deg,#080a0b 0%,rgba(8,10,11,.17) 62%,rgba(4,6,7,.25)); }
+          .hero-veil { background:linear-gradient(90deg,rgba(5,7,8,.78),rgba(5,7,8,.28)),linear-gradient(0deg,#080a0b,rgba(8,10,11,.17) 62%,rgba(4,6,7,.25)); }
           .hero-layout { padding:180px 23px 96px; }
-          .hero-title { margin-top:25px; font-size:clamp(4.25rem,18vw,6.2rem); }
+          .hero-eyebrow { font-size:8px; line-height:1.7; letter-spacing:.17em; }
+          .hero-title { margin-top:25px; font-size:clamp(4rem,17vw,6.2rem); }
           .hero-deck { margin-top:24px; max-width:340px; font-size:21px; }
           .hero-note { display:none; }
           .hero-actions { gap:9px; }
           .hero-actions .action-link { min-height:46px; padding:13px 14px; font-size:8px; }
           .story-intro__inner { padding:58px 23px 38px; }
-          .reading-topline { font-size:7px; letter-spacing:.16em; }
+          .story-intro p { font-size:12px; }
+          .story-article { padding-inline:18px; }
+          .reading-topline { font-size:7px; letter-spacing:.11em; gap:10px; }
           .story-copy { padding-top:30px; }
-          .story-paragraph { font-size:18px; line-height:1.82; text-indent:1.05em; }
+          .story-paragraph { font-size:18px; line-height:1.82; text-indent:1em; }
           .story-paragraph:first-child::first-letter { font-size:4.6rem; }
+          .story-paragraph--reveal { margin-top:1.55em !important; margin-bottom:1.55em; }
+          .story-paragraph--major-reveal { margin-top:1.7em !important; margin-bottom:1.7em; }
+          .story-paragraph--ending { margin-top:2em !important; }
           .story-image { margin:58px auto; }
-          .story-image__frame { height:clamp(310px,93vw,420px); }
+          .story-image__frame { height:clamp(310px,93vw,420px); min-height:280px; }
           .story-image--loop .story-image__frame { height:228px; min-height:228px; }
           .story-image__photo { object-position:center; }
           .story-image__copy { left:20px; right:20px; bottom:22px; }
-          .story-image__copy p { font-size:31px; }
+          .story-image__copy p { font-size:clamp(27px,8vw,34px); }
           .reader-ending { margin-top:78px; margin-bottom:80px; }
           .collection__inner { padding-top:76px; }
           .collection__hero { display:flex; flex-direction:column; align-items:stretch; gap:38px; }
@@ -531,7 +518,21 @@ function App() {
           .direct-row { grid-template-columns:1fr; }
           .author-footer { margin-top:68px; }
         }
-        @media (prefers-reduced-motion: reduce) {
+        @media (max-width:380px) {
+          .nav-inner { align-items:flex-start; }
+          .brand-subtitle { max-width:142px; line-height:1.25; }
+          .nav-links { gap:9px; padding-top:2px; }
+          .nav-links a { font-size:6.5px; letter-spacing:.07em; }
+          .hero-layout { padding-inline:18px; }
+          .hero-actions { align-items:stretch; flex-direction:column; max-width:270px; }
+          .hero-actions .action-link { justify-content:space-between; }
+          .story-article { padding-inline:14px; }
+          .story-paragraph { font-size:17.5px; }
+          .reading-topline { letter-spacing:.07em; }
+          .reading-topline span:last-child { max-width:48%; }
+          .edition-card { padding:19px; }
+        }
+        @media (prefers-reduced-motion:reduce) {
           html { scroll-behavior:auto; }
           .hero-photo,.hero-fallback__beam,.hero-fog,.hero-beam,.story-image__photo,.story-image__fog,.collection__fog,.reader-ending::before,.wind-thread,.wind-grain { animation:none !important; }
           .wind-overlay { opacity:.22; }
@@ -602,12 +603,25 @@ function App() {
       <article id="story" className="story-article" aria-label="The Lighthouse — complete short story">
         <div className="reading-topline"><span>THE LIGHTHOUSE</span><span>Read at your own pace · Full story</span></div>
         <div className="story-copy">
-          {STORY.map((paragraph, index) => (
-            <Fragment key={index}>
-              <p className="story-paragraph">{paragraph}</p>
-              {storyVisuals[index] || null}
-            </Fragment>
-          ))}
+          {STORY.map((paragraph, index) => {
+            const isReveal = REVEAL_BEATS.has(paragraph);
+            const isDialogue = paragraph.startsWith('‘');
+            const isMajorReveal = paragraph.includes('His hand passed straight through him.') || paragraph.includes('It was his own face.') || paragraph.includes('The water passed through him.');
+            const paragraphClassName = [
+              'story-paragraph',
+              isReveal && 'story-paragraph--reveal',
+              isDialogue && 'story-paragraph--dialogue',
+              isMajorReveal && 'story-paragraph--major-reveal',
+              index === STORY.length - 1 && 'story-paragraph--ending',
+            ].filter(Boolean).join(' ');
+
+            return (
+              <Fragment key={paragraph}>
+                <p className={paragraphClassName}>{paragraph}</p>
+                {storyVisuals[index] || null}
+              </Fragment>
+            );
+          })}
         </div>
         <section className="reader-ending" aria-labelledby="reader-ending-title">
           <div className="reader-ending__rule" aria-hidden="true" />
@@ -645,7 +659,7 @@ function App() {
 
           <div className="collection__manifesto">
             <div>
-              <p> A collection of aftermaths </p>
+              <p>A collection of aftermaths</p>
               <p>Some things are lost. Some are buried. Some remain long after we have stopped looking for them.</p>
             </div>
             <div className="collection__manifesto-side">Dark tales<br />of what remains</div>
