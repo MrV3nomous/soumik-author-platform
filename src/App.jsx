@@ -144,7 +144,6 @@ function ImageLayer({ story, className = '' }) {
 }
 
 function StoryCard({ story, index, navigate }) {
-  const hasText = STORIES_WITH_TEXT.has(story.slug);
   return (
     <article className={`story-card story-card--${story.slug}`} style={{ '--story-accent': story.palette.accent, '--story-glow': story.palette.glow, '--story-surface': story.palette.surface }}>
       <InternalLink to={`/stories/${story.slug}`} navigate={navigate} className="story-card__link" aria-label={`Explore ${story.title}`}>
@@ -154,7 +153,6 @@ function StoryCard({ story, index, navigate }) {
           <span className="story-card__number">{String(index + 1).padStart(2, '0')}</span>
           <span className="story-card__format">{story.format}</span>
           <span className="story-card__motif">{story.motif}</span>
-          <span className="story-card__availability">{hasText ? (story.readingMode === 'full' ? 'FULL STORY · FREE' : 'READ PREVIEW') : 'IN THE COLLECTION'}</span>
           <span className="story-card__open" aria-hidden="true"><Arrow diagonal /></span>
         </div>
         <div className="story-card__copy">
