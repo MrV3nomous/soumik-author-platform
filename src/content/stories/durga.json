@@ -1,0 +1,60 @@
+{
+  "order": 5,
+  "slug": "durga",
+  "title": "Durga",
+  "format": "In the collection",
+  "category": "Domestic horror · Psychological tragedy",
+  "shortLine": "A woman survives the night, then must live through its morning.",
+  "synopsis": "Durga has learned to disguise suffering as tiredness inside a home ruled by Inspector Nitin Sobhraj, a man whose public respectability protects his private cruelty. Haunted by Raj’s death and by visions that offer both comfort and accusation, she is forced to face the terrible distance between the man the city admires and the monster who owns her life.",
+  "themes": [
+    "Domestic abuse",
+    "Institutional impunity",
+    "Complicity and silence",
+    "Trauma",
+    "Grief",
+    "Learned helplessness",
+    "The violence of respectability"
+  ],
+  "image": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1800&q=90",
+  "imageAlt": "A woman in a vivid red dress, isolated against a muted background",
+  "imageCredit": "Unsplash",
+  "palette": {
+    "accent": "#f07a79",
+    "glow": "rgba(190, 43, 53, .23)",
+    "background": "#1a090d",
+    "surface": "#2a1117"
+  },
+  "motif": "The ruined red dress",
+  "detailLine": "The city trusts the man who breaks her. The morning asks her to make his tea.",
+  "readingMode": "book",
+  "underneath": "The horror is not hidden in a distant supernatural place; it lives inside an ordinary home and is sustained by silence. The visions of Raj blur comfort with guilt, while the city’s routine reveals how violence can coexist with public respectability.",
+  "visualMotifs": [
+    "A red dress torn against a grey room",
+    "An olive shirt carrying the memory of love",
+    "A ceiling fan turning without pause",
+    "A newspaper in the morning sun",
+    "A dead bat on the floor"
+  ],
+  "coreQuestion": "When everyone around a victim keeps ordinary life moving, does their silence remain neutrality—or become part of the violence?",
+  "detailImage": {
+    "src": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1500&q=86",
+    "alt": "A quiet domestic room with the furniture left in order",
+    "caption": "The room looks ordinary because the world expects it to."
+  },
+  "readerImages": [
+    {
+      "src": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1500&q=86",
+      "alt": "Severe urban architecture rising beyond the viewer",
+      "caption": "Respectability is a façade with many floors.",
+      "afterRatio": 0.27,
+      "layout": "wide"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A red dress standing out against a subdued setting",
+      "caption": "The red dress holds the shape of a hope that was weaponised.",
+      "afterRatio": 0.7,
+      "layout": "offset"
+    }
+  ]
+}

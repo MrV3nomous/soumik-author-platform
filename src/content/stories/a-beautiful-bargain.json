@@ -1,0 +1,58 @@
+{
+  "order": 4,
+  "slug": "a-beautiful-bargain",
+  "title": "A Beautiful Bargain",
+  "format": "In the collection",
+  "category": "Gothic horror · Dark fairy tale",
+  "shortLine": "Youth has a price. Every six months, someone else must pay it.",
+  "synopsis": "Jennifer, a wealthy Parisian beauty-parlour owner, cannot bear the prospect of growing old. A mysterious bargain restores her youth in exchange for a young woman every six months. As the price of beauty draws closer to home, she must face what she is willing to sacrifice—and what she cannot bring herself to surrender.",
+  "themes": [
+    "Vanity",
+    "Exploitation",
+    "Transactional love",
+    "Motherhood",
+    "Fear of age",
+    "Moral compromise"
+  ],
+  "image": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1400&q=86",
+  "imageAlt": "An elegant fashion portrait in a muted, moody setting",
+  "imageCredit": "Unsplash",
+  "palette": {
+    "accent": "#d6b579",
+    "glow": "rgba(183, 117, 58, .22)",
+    "background": "#170e13",
+    "surface": "#271820"
+  },
+  "motif": "A tarnished mirror",
+  "detailLine": "Beauty can become a debt that never stops collecting.",
+  "readingMode": "book",
+  "underneath": "The bargain turns a culture’s worship of youth into a literal economy of stolen lives. Jennifer’s final refusal does not erase the people she has already treated as currency.",
+  "visualMotifs": [
+    "A mirror clouded at the edges",
+    "Burgundy velvet and antique gold",
+    "A rose browning from the centre",
+    "A beautiful face split by shadow"
+  ],
+  "coreQuestion": "If you have survived by treating other people as the price of your happiness, can one act of love redeem the bargain?",
+  "detailImage": {
+    "src": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1500&q=86",
+    "alt": "Fine fabrics arranged like objects in a private collection",
+    "caption": "Luxury becomes frightening when every object has a hidden cost."
+  },
+  "readerImages": [
+    {
+      "src": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1500&q=86",
+      "alt": "An elegant fashion figure in a carefully composed editorial portrait",
+      "caption": "Youth, presented as something that can be purchased.",
+      "afterRatio": 0.28,
+      "layout": "wide"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A red dress isolated against a muted background",
+      "caption": "Every bargain leaves a stain somewhere outside the frame.",
+      "afterRatio": 0.7,
+      "layout": "offset"
+    }
+  ]
+}

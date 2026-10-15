@@ -1,0 +1,1 @@
+These are the only story prose files the website reads. Paste only approved public excerpts here while KDP Select exclusivity is active. Use normal text and a blank line between paragraphs. Complete manuscripts belong in the sibling `private-manuscript-templates` folder, not here.

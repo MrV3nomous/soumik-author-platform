@@ -1,0 +1,58 @@
+{
+  "order": 8,
+  "slug": "you-came-back",
+  "title": "You Came Back",
+  "format": "In the collection",
+  "category": "Psychological supernatural horror",
+  "shortLine": "An old well. A childhood friend. A secret that never stayed buried.",
+  "synopsis": "At sixty-two, widower Edward seeks contact with Gary, the childhood friend who disappeared into an old forest well. Their reunion draws a buried memory into the present, but Gary’s return leaves Edward uncertain whether the dead have come back—or whether guilt has been waiting for him all along.",
+  "themes": [
+    "Childhood guilt",
+    "Memory",
+    "Friendship",
+    "Aging",
+    "Denial",
+    "The uncanny"
+  ],
+  "image": "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1400&q=86",
+  "imageAlt": "A dense, shadowed forest with deep green foliage",
+  "imageCredit": "Unsplash",
+  "palette": {
+    "accent": "#a6bd8d",
+    "glow": "rgba(93, 139, 91, .22)",
+    "background": "#0b1510",
+    "surface": "#16251b"
+  },
+  "motif": "The old well",
+  "detailLine": "Some friendships do not end with death.",
+  "readingMode": "book",
+  "underneath": "The story lets memory behave like a place: something a person can avoid for decades, but never truly leave. Gary’s return is terrifying because it may be supernatural, psychological, or both.",
+  "visualMotifs": [
+    "Moss around a stone rim",
+    "A forest path swallowed by mist",
+    "A face at the bottom of dark water",
+    "An old man’s hand on wet stone"
+  ],
+  "coreQuestion": "If memory has changed the story you tell yourself for a lifetime, what would it mean to finally hear the truth?",
+  "detailImage": {
+    "src": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1500&q=86",
+    "alt": "A narrow path enclosed by a dark forest",
+    "caption": "A path can disappear without ceasing to exist."
+  },
+  "readerImages": [
+    {
+      "src": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A still lake surrounded by distant mountains and woodland",
+      "caption": "The surface hides its depth with perfect calm.",
+      "afterRatio": 0.28,
+      "layout": "wide"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1500&q=86",
+      "alt": "Dense trees gathering around a shadowed forest floor",
+      "caption": "Some places do not release the people who enter them.",
+      "afterRatio": 0.7,
+      "layout": "offset"
+    }
+  ]
+}

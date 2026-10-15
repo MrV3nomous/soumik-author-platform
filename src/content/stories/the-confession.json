@@ -1,0 +1,58 @@
+{
+  "order": 7,
+  "slug": "the-confession",
+  "title": "The Confession",
+  "format": "In the collection",
+  "category": "Supernatural horror · Moral reckoning",
+  "shortLine": "A dying priest reveals a life of cruelty—and a listener who knows too much.",
+  "synopsis": "A dying priest confesses to a life of cruelty, manipulation, exploitation, and murder, expecting the ritual of confession to give his secrets somewhere to go. But the young priest listening is no innocent witness. The encounter becomes a sentence without absolution: the condemned man must live beneath the gaze of someone who knows what he has done.",
+  "themes": [
+    "Religious hypocrisy",
+    "Shame",
+    "Abuse of authority",
+    "Murder",
+    "False absolution",
+    "Supernatural justice"
+  ],
+  "image": "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1400&q=86",
+  "imageAlt": "A shadowed, solemn interior with an ecclesiastical atmosphere",
+  "imageCredit": "Unsplash",
+  "palette": {
+    "accent": "#baa9d6",
+    "glow": "rgba(128, 105, 166, .22)",
+    "background": "#100f18",
+    "surface": "#1e1b29"
+  },
+  "motif": "A confession without absolution",
+  "detailLine": "Some truths do not set a person free.",
+  "readingMode": "book",
+  "underneath": "The story questions the idea that naming a sin is the same as answering for it. Confession becomes horrifying when the listener cannot be manipulated, dismissed, or made to forget.",
+  "visualMotifs": [
+    "Candlelight dying against stone",
+    "A shadow seated in the confessional",
+    "Wine-dark stains on pale cloth",
+    "A door that never quite closes"
+  ],
+  "coreQuestion": "Is confession an act of remorse if the confessor wants relief more than responsibility?",
+  "detailImage": {
+    "src": "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=1500&q=86",
+    "alt": "A small flame inside a dark room",
+    "caption": "A candle can illuminate a room without absolving anyone inside it."
+  },
+  "readerImages": [
+    {
+      "src": "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A solemn church interior receding into shadow",
+      "caption": "Stone remembers the weight placed beneath its roof.",
+      "afterRatio": 0.28,
+      "layout": "wide"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1548625149-720134c1f052?auto=format&fit=crop&w=1500&q=86",
+      "alt": "Coloured light falling across a sacred architectural interior",
+      "caption": "Ritual may offer words; it cannot perform repentance.",
+      "afterRatio": 0.7,
+      "layout": "offset"
+    }
+  ]
+}

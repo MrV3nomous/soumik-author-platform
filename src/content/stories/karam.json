@@ -1,0 +1,60 @@
+{
+  "order": 9,
+  "slug": "karam",
+  "title": "Karam",
+  "format": "Bonus novella",
+  "category": "Psychological thriller · Revenge horror",
+  "shortLine": "An elite gathering wakes inside a prison where every test has a price.",
+  "synopsis": "Ashish and Pankaj were once inseparable friends at IIT Kharagpur. Years later, one has risen into political power while the other has been left behind. At a lavish gathering of the powerful, the lights go out—and the guests awaken inside a tower where a mysterious captor forces them to confront the corruption they have lived beside.",
+  "themes": [
+    "Envy",
+    "Friendship",
+    "Class resentment",
+    "Political corruption",
+    "Retribution",
+    "Identity",
+    "The cost of revenge"
+  ],
+  "image": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1600&q=86",
+  "imageAlt": "A dense urban skyline under a muted, overcast sky",
+  "imageCredit": "Unsplash",
+  "palette": {
+    "accent": "#d59a8d",
+    "glow": "rgba(178, 60, 57, .22)",
+    "background": "#101115",
+    "surface": "#1e1e25"
+  },
+  "motif": "A tower under surveillance",
+  "detailLine": "The final test remembers what everyone else forgot.",
+  "readingMode": "book",
+  "underneath": "The tower becomes a brutal theatre in which power loses its familiar protections. Yet revenge carries its own question: can a person expose a corrupt world without becoming shaped by the same cruelty?",
+  "visualMotifs": [
+    "Concrete floors without windows",
+    "Cold fluorescent corridors",
+    "A bandaged figure in a doorway",
+    "A Rolex beneath scorched skin",
+    "A tower seen from far below"
+  ],
+  "coreQuestion": "When justice is unavailable, how easily can revenge begin to resemble the system it claims to punish?",
+  "detailImage": {
+    "src": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1500&q=86",
+    "alt": "A severe glass-and-concrete tower viewed from below",
+    "caption": "Power changes shape when seen from the bottom of the tower."
+  },
+  "readerImages": [
+    {
+      "src": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A crowded skyline whose towers erase the horizon",
+      "caption": "The city is a monument to people who believe they cannot fall.",
+      "afterRatio": 0.27,
+      "layout": "wide"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1500&q=86",
+      "alt": "Angular monumental architecture under hard daylight",
+      "caption": "A structure built to dominate can become a structure of confinement.",
+      "afterRatio": 0.7,
+      "layout": "offset"
+    }
+  ]
+}
