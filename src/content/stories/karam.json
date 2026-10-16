@@ -15,8 +15,8 @@
     "Identity",
     "The cost of revenge"
   ],
-  "image": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1600&q=86",
-  "imageAlt": "A dense urban skyline under a muted, overcast sky",
+  "image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=86",
+  "imageAlt": "A severe glass-and-concrete tower viewed from below",
   "imageCredit": "Unsplash",
   "palette": {
     "accent": "#d59a8d",
@@ -37,22 +37,22 @@
   ],
   "coreQuestion": "When justice is unavailable, how easily can revenge begin to resemble the system it claims to punish?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1500&q=86",
-    "alt": "A severe glass-and-concrete tower viewed from below",
-    "caption": "Power changes shape when seen from the bottom of the tower."
+    "src": "https://images.unsplash.com/photo-1769527819917-fefaf23ec240?auto=format&fit=crop&w=1500&q=86",
+    "alt": "A long, dark prison corridor with multiple levels",
+    "caption": "Inside the tower, every floor makes its own law."
   },
   "readerImages": [
     {
       "src": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A crowded skyline whose towers erase the horizon",
-      "caption": "The city is a monument to people who believe they cannot fall.",
+      "alt": "A dense urban skyline where towers crowd the horizon",
+      "caption": "The city above keeps functioning while the tower closes around its guests.",
       "afterRatio": 0.27,
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1500&q=86",
-      "alt": "Angular monumental architecture under hard daylight",
-      "caption": "A structure built to dominate can become a structure of confinement.",
+      "src": "https://images.unsplash.com/photo-1772638904187-1d1e8f1452f3?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A steel wristwatch with a dark dial seen in close-up",
+      "caption": "A watch is only an object until it carries the weight of a friendship.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

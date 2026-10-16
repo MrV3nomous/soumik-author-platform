@@ -35,22 +35,22 @@
   ],
   "coreQuestion": "If you have survived by treating other people as the price of your happiness, can one act of love redeem the bargain?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1500&q=86",
-    "alt": "Fine fabrics arranged like objects in a private collection",
-    "caption": "Luxury becomes frightening when every object has a hidden cost."
+    "src": "https://images.unsplash.com/photo-1773867567907-ed7c4dc4197f?auto=format&fit=crop&w=1500&q=86",
+    "alt": "A dressing table with a large mirror and carefully arranged objects",
+    "caption": "Every morning, the mirror asks what beauty has cost."
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1500&q=86",
-      "alt": "An elegant fashion figure in a carefully composed editorial portrait",
-      "caption": "Youth, presented as something that can be purchased.",
+      "src": "https://images.unsplash.com/photo-1759405186191-f312aa61bd40?auto=format&fit=crop&w=1500&q=86",
+      "alt": "An elderly woman in profile looking toward a window in a vintage photograph",
+      "caption": "Age arrives quietly, even in lives built to keep it away.",
       "afterRatio": 0.28,
       "layout": "wide"
     },
     {
       "src": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A red dress isolated against a muted background",
-      "caption": "Every bargain leaves a stain somewhere outside the frame.",
+      "alt": "A red dress standing out against a muted background",
+      "caption": "What she refuses to pay with her daughter, she has already demanded from others.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

@@ -36,9 +36,9 @@
   ],
   "coreQuestion": "If someone finally sees you exactly as you wish to be seen, how would you know whether they were recognising you—or keeping you?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1500&q=86",
-    "alt": "Rows of books disappearing into a dim interior",
-    "caption": "An archive preserves what a living person may lose."
+    "src": "https://images.unsplash.com/photo-1718286111463-a2bdc0ea91a7?auto=format&fit=crop&w=1500&q=86",
+    "alt": "A dark hallway with a chair and a window in an old house",
+    "caption": "The mansion's rooms seem to be waiting for their next subject."
   },
   "readerImages": [
     {
@@ -49,9 +49,9 @@
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1500&q=86",
-      "alt": "An elegant interior arranged with unnerving stillness",
-      "caption": "A beautiful room can be another kind of frame.",
+      "src": "https://images.unsplash.com/photo-1740350631567-5d813fe78adf?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A camera set up in a dark room under coloured studio light",
+      "caption": "In Gustav's studio, being seen is only the beginning of the trap.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

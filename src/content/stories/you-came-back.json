@@ -14,8 +14,8 @@
     "Denial",
     "The uncanny"
   ],
-  "image": "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1400&q=86",
-  "imageAlt": "A dense, shadowed forest with deep green foliage",
+  "image": "https://images.unsplash.com/photo-1778657006928-c1b3a33d4f14?auto=format&fit=crop&w=1400&q=86",
+  "imageAlt": "An ancient moss-covered stone well descending into darkness",
   "imageCredit": "Unsplash",
   "palette": {
     "accent": "#a6bd8d",
@@ -41,9 +41,9 @@
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A still lake surrounded by distant mountains and woodland",
-      "caption": "The surface hides its depth with perfect calm.",
+      "src": "https://images.unsplash.com/photo-1672196804611-1d853d5d82ff?auto=format&fit=crop&w=1500&q=86",
+      "alt": "A shadowed path running through a dense, dark forest",
+      "caption": "The path to the well is easier to find than the truth that waits there.",
       "afterRatio": 0.28,
       "layout": "wide"
     },
