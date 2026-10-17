@@ -15,9 +15,9 @@
     "Learned helplessness",
     "The violence of respectability"
   ],
-  "image": "https://images.unsplash.com/photo-1679462564386-35b8916a90e1?auto=format&fit=crop&w=1800&q=90",
-  "imageAlt": "A solitary figure sitting in a dark room beside a window",
-  "imageCredit": "Unsplash",
+  "image": "https://images.unsplash.com/photo-1714134847978-8bf4ddf6fef9?auto=format&fit=crop&w=2000&q=83&crop=entropy",
+  "imageAlt": "A dim bedroom with a ceiling fan and bed, an ordinary domestic space.",
+  "imageCredit": "Unsplash — Rupam Dhar; photo page linked in UNSPLASH-SOURCES.txt.",
   "palette": {
     "accent": "#f07a79",
     "glow": "rgba(190, 43, 53, .23)",
@@ -37,22 +37,22 @@
   ],
   "coreQuestion": "When everyone around a victim keeps ordinary life moving, does their silence remain neutrality—or become part of the violence?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1500&q=86",
-    "alt": "A quiet domestic room with the furniture left in order",
-    "caption": "The room looks ordinary because the world expects it to."
+    "src": "https://images.unsplash.com/photo-1745813083487-455c70e15557?auto=format&fit=crop&w=2000&q=83&crop=entropy",
+    "alt": "A dark, spare room receives a hard shaft of daylight through its window.",
+    "caption": "Morning returns to a house that has not become safe."
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1500&q=86",
-      "alt": "Severe urban architecture rising beyond the viewer",
-      "caption": "Respectability is a façade with many floors.",
-      "afterRatio": 0.27,
+      "src": "https://images.unsplash.com/photo-1745813083487-455c70e15557?auto=format&fit=crop&w=2000&q=83&crop=entropy",
+      "alt": "A dark, spare room receives a hard shaft of daylight through its window.",
+      "caption": "Morning returns to a house that has not become safe.",
+      "afterRatio": 0.28,
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1653421877354-2b6e1e08fa25?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A red dress hanging beside a curtain in a dim room",
-      "caption": "The dress remains after the hope it carried has been damaged.",
+      "src": "https://images.unsplash.com/photo-1714134847978-8bf4ddf6fef9?auto=format&fit=crop&w=2000&q=83&crop=entropy",
+      "alt": "A dim bedroom with a ceiling fan and bed, an ordinary domestic space.",
+      "caption": "The ordinary room, after the shouting has stopped.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

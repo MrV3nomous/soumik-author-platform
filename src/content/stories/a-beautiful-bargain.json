@@ -14,9 +14,9 @@
     "Fear of age",
     "Moral compromise"
   ],
-  "image": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1400&q=86",
-  "imageAlt": "An elegant fashion portrait in a muted, moody setting",
-  "imageCredit": "Unsplash",
+  "image": "https://images.unsplash.com/photo-1636625632436-6f7f823341aa?auto=format&fit=crop&w=2000&q=84&crop=entropy",
+  "imageAlt": "A woman stands before a mirror in a dim, dark-toned room.",
+  "imageCredit": "Unsplash — Navid Sohrabi; photo page linked in UNSPLASH-SOURCES.txt.",
   "palette": {
     "accent": "#d6b579",
     "glow": "rgba(183, 117, 58, .22)",
@@ -35,22 +35,22 @@
   ],
   "coreQuestion": "If you have survived by treating other people as the price of your happiness, can one act of love redeem the bargain?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1773867567907-ed7c4dc4197f?auto=format&fit=crop&w=1500&q=86",
-    "alt": "A dressing table with a large mirror and carefully arranged objects",
-    "caption": "Every morning, the mirror asks what beauty has cost."
+    "src": "https://images.unsplash.com/photo-1637081182843-f89af4fbe51e?auto=format&fit=crop&w=2600&q=86&crop=entropy",
+    "alt": "A book rests with a rose and candle in a quiet still life.",
+    "caption": "Beauty begins to look like a transaction."
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1759405186191-f312aa61bd40?auto=format&fit=crop&w=1500&q=86",
-      "alt": "An elderly woman in profile looking toward a window in a vintage photograph",
-      "caption": "Age arrives quietly, even in lives built to keep it away.",
+      "src": "https://images.unsplash.com/photo-1637081182843-f89af4fbe51e?auto=format&fit=crop&w=2600&q=86&crop=entropy",
+      "alt": "A book rests with a rose and candle in a quiet still life.",
+      "caption": "Beauty begins to look like a transaction.",
       "afterRatio": 0.28,
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A red dress standing out against a muted background",
-      "caption": "What she refuses to pay with her daughter, she has already demanded from others.",
+      "src": "https://images.unsplash.com/photo-1636625632436-6f7f823341aa?auto=format&fit=crop&w=2000&q=84&crop=entropy",
+      "alt": "A woman stands before a mirror in a dim, dark-toned room.",
+      "caption": "Every mirror offers a version worth believing.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

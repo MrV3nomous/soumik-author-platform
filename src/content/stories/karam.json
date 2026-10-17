@@ -15,9 +15,9 @@
     "Identity",
     "The cost of revenge"
   ],
-  "image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=86",
-  "imageAlt": "A severe glass-and-concrete tower viewed from below",
-  "imageCredit": "Unsplash",
+  "image": "https://images.unsplash.com/photo-1728555729413-06b511297f64?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+  "imageAlt": "A stark concrete tower rises against a nearly black sky, its repetitive geometry imposing and impersonal.",
+  "imageCredit": "Unsplash — Aram Ramazyan; photo page linked in UNSPLASH-SOURCES.txt.",
   "palette": {
     "accent": "#d59a8d",
     "glow": "rgba(178, 60, 57, .22)",
@@ -37,22 +37,22 @@
   ],
   "coreQuestion": "When justice is unavailable, how easily can revenge begin to resemble the system it claims to punish?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1769527819917-fefaf23ec240?auto=format&fit=crop&w=1500&q=86",
-    "alt": "A long, dark prison corridor with multiple levels",
-    "caption": "Inside the tower, every floor makes its own law."
+    "src": "https://images.unsplash.com/photo-1771162411352-416ea7e0e88b?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+    "alt": "A long dark corridor with distant lights creates a sense of controlled passage.",
+    "caption": "No corridor leads out until someone allows it."
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A dense urban skyline where towers crowd the horizon",
-      "caption": "The city above keeps functioning while the tower closes around its guests.",
-      "afterRatio": 0.27,
+      "src": "https://images.unsplash.com/photo-1771162411352-416ea7e0e88b?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+      "alt": "A long dark corridor with distant lights creates a sense of controlled passage.",
+      "caption": "No corridor leads out until someone allows it.",
+      "afterRatio": 0.28,
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1772638904187-1d1e8f1452f3?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A steel wristwatch with a dark dial seen in close-up",
-      "caption": "A watch is only an object until it carries the weight of a friendship.",
+      "src": "https://images.unsplash.com/photo-1728555729413-06b511297f64?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+      "alt": "A stark concrete tower rises against a nearly black sky, its repetitive geometry imposing and impersonal.",
+      "caption": "Power often looks like architecture before it reveals its human cost.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

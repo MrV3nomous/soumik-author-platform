@@ -14,9 +14,9 @@
     "The limits of science",
     "Letting go"
   ],
-  "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1400&q=86",
-  "imageAlt": "A cool-lit laboratory with glass and scientific equipment",
-  "imageCredit": "Unsplash",
+  "image": "https://images.unsplash.com/photo-1748261347902-451fb437e8fb?auto=format&fit=crop&w=2200&q=84&crop=entropy",
+  "imageAlt": "Glass laboratory equipment and a pipette used in a scientific experiment, lit in cool tones.",
+  "imageCredit": "Unsplash — Nathan Rimoux; photo page linked in UNSPLASH-SOURCES.txt.",
   "palette": {
     "accent": "#a8d7e2",
     "glow": "rgba(93, 163, 185, .22)",
@@ -35,22 +35,22 @@
   ],
   "coreQuestion": "When does the wish to preserve someone stop serving the person you love and start serving your own grief?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1670674027751-08f08af2b921?auto=format&fit=crop&w=1500&q=86",
-    "alt": "Blue-white fractures of ice across a frozen surface",
-    "caption": "Cold can preserve an object without preserving the life inside it."
+    "src": "https://images.unsplash.com/photo-1710074213374-e68503a1b795?auto=format&fit=crop&w=2200&q=84&crop=entropy",
+    "alt": "An empty hospital room with beds and a desk, quiet and clinically lit.",
+    "caption": "A clinical room cannot make grief clinical."
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1749087869560-1f00fe44b58e?auto=format&fit=crop&w=1500&q=86",
-      "alt": "An empty hospital bed in a dimly lit room",
-      "caption": "Before preservation became an obsession, there was a room in which Lily could only be lost.",
-      "afterRatio": 0.3,
+      "src": "https://images.unsplash.com/photo-1710074213374-e68503a1b795?auto=format&fit=crop&w=2200&q=84&crop=entropy",
+      "alt": "An empty hospital room with beds and a desk, quiet and clinically lit.",
+      "caption": "A clinical room cannot make grief clinical.",
+      "afterRatio": 0.28,
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1500&q=86",
-      "alt": "Cold mountain peaks beneath a deep blue night sky",
-      "caption": "A cold beauty that cannot bring anyone back.",
+      "src": "https://images.unsplash.com/photo-1748261347902-451fb437e8fb?auto=format&fit=crop&w=2200&q=84&crop=entropy",
+      "alt": "Glass laboratory equipment and a pipette used in a scientific experiment, lit in cool tones.",
+      "caption": "Glass, instruments, and the promise of preservation.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

@@ -14,9 +14,9 @@
     "Time and denial",
     "The uncanny"
   ],
-  "image": "https://images.unsplash.com/photo-1756890233247-69b4e23273a7?auto=format&fit=crop&w=1400&q=86",
-  "imageAlt": "A woman in a green evening dress against city lights at night",
-  "imageCredit": "Unsplash",
+  "image": "https://images.unsplash.com/photo-1681022252769-8d219977e1d9?auto=format&fit=crop&w=2000&q=84&crop=entropy",
+  "imageAlt": "A woman in a vivid red dress stands in a dark, windowed interior.",
+  "imageCredit": "Unsplash — Mehran Biabani; photo page linked in UNSPLASH-SOURCES.txt.",
   "palette": {
     "accent": "#82c69a",
     "glow": "rgba(55, 137, 82, .23)",
@@ -35,22 +35,22 @@
   ],
   "coreQuestion": "If a secret gives you the life you think you deserve, what happens when it reveals the life you have actually been living?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1716824685050-01c7554c63f4?auto=format&fit=crop&w=1500&q=86",
-    "alt": "A view of a city at night from a rooftop",
-    "caption": "Above the apartment, the city becomes a place to hide in plain sight."
+    "src": "https://images.unsplash.com/photo-1680098523924-606791d5fd12?auto=format&fit=crop&w=2000&q=84&crop=entropy",
+    "alt": "A close-up face appears in dark, uneven reflected light, creating an uneasy portrait.",
+    "caption": "The reflection is the detail worth looking at twice."
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1500&q=86",
-      "alt": "Carefully arranged garments and textured fabrics",
-      "caption": "A beautiful surface can conceal a life stitched with omissions.",
-      "afterRatio": 0.27,
+      "src": "https://images.unsplash.com/photo-1680098523924-606791d5fd12?auto=format&fit=crop&w=2000&q=84&crop=entropy",
+      "alt": "A close-up face appears in dark, uneven reflected light, creating an uneasy portrait.",
+      "caption": "The reflection is the detail worth looking at twice.",
+      "afterRatio": 0.28,
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1762356928383-f0c9d92929eb?auto=format&fit=crop&w=1500&q=86",
-      "alt": "Rooftop silhouettes against a twilight sky",
-      "caption": "Every night offered Jack a doorway out of his life—and back into the lie.",
+      "src": "https://images.unsplash.com/photo-1681022252769-8d219977e1d9?auto=format&fit=crop&w=2000&q=84&crop=entropy",
+      "alt": "A woman in a vivid red dress stands in a dark, windowed interior.",
+      "caption": "A beautiful distraction can hide an impossible truth.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

@@ -14,9 +14,9 @@
     "False absolution",
     "Supernatural justice"
   ],
-  "image": "https://images.unsplash.com/photo-1776717240647-b7f1e41f9ead?auto=format&fit=crop&w=1400&q=86",
-  "imageAlt": "A confessional booth inside a church, with a priest visible",
-  "imageCredit": "Unsplash",
+  "image": "https://images.unsplash.com/photo-1531808012724-688c1de500b4?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+  "imageAlt": "An empty church interior with wooden pews and dim, directional light.",
+  "imageCredit": "Unsplash — Gregory Hayes; photo page linked in UNSPLASH-SOURCES.txt.",
   "palette": {
     "accent": "#baa9d6",
     "glow": "rgba(128, 105, 166, .22)",
@@ -35,22 +35,22 @@
   ],
   "coreQuestion": "Is confession an act of remorse if the confessor wants relief more than responsibility?",
   "detailImage": {
-    "src": "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=1500&q=86",
-    "alt": "A small flame inside a dark room",
-    "caption": "A candle can illuminate a room without absolving anyone inside it."
+    "src": "https://images.unsplash.com/photo-1771162411352-416ea7e0e88b?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+    "alt": "A dark, empty corridor recedes into blue-green shadow.",
+    "caption": "A secret can follow a person into every room."
   },
   "readerImages": [
     {
-      "src": "https://images.unsplash.com/photo-1774714386292-3794be2a4f55?auto=format&fit=crop&w=1500&q=86",
-      "alt": "A dark, empty church interior beneath high arched ceilings",
-      "caption": "Stone remembers the weight placed beneath its roof.",
+      "src": "https://images.unsplash.com/photo-1771162411352-416ea7e0e88b?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+      "alt": "A dark, empty corridor recedes into blue-green shadow.",
+      "caption": "A secret can follow a person into every room.",
       "afterRatio": 0.28,
       "layout": "wide"
     },
     {
-      "src": "https://images.unsplash.com/photo-1548625149-720134c1f052?auto=format&fit=crop&w=1500&q=86",
-      "alt": "Coloured light falling across a sacred architectural interior",
-      "caption": "Ritual may offer words; it cannot perform repentance.",
+      "src": "https://images.unsplash.com/photo-1531808012724-688c1de500b4?auto=format&fit=crop&w=2200&q=83&crop=entropy",
+      "alt": "An empty church interior with wooden pews and dim, directional light.",
+      "caption": "A place for confession is not necessarily a place for mercy.",
       "afterRatio": 0.7,
       "layout": "offset"
     }

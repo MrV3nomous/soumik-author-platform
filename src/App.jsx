@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 
@@ -29,6 +29,13 @@ const STORIES_WITH_TEXT = new Set(
     .map(([slug]) => slug),
 );
 
+// Temporary Unsplash photography for visual review. Replace with optimized/local artwork later.
+const UNSPLASH_SCENES = {
+  hero: 'https://images.unsplash.com/photo-1637081182843-f89af4fbe51e?auto=format&fit=crop&w=2600&q=86&crop=entropy',
+  epilogue: 'https://images.unsplash.com/photo-1758301064875-b46ec97564dd?auto=format&fit=crop&w=2400&q=84&crop=entropy',
+  lighthouseDetail: 'https://images.unsplash.com/photo-1758301064875-b46ec97564dd?auto=format&fit=crop&w=2200&q=84&crop=entropy',
+};
+
 function getStoryParagraphs(slug) {
   const source = (STORY_TEXT[slug] || '').replace(/\r\n?/g, '\n').trim();
   if (!source) return [];
@@ -49,12 +56,21 @@ const BOOK = {
   cover: '/book-mockup.png',
 };
 
+function safeDecodeURIComponent(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    // A malformed percent-escape should lead to the not-found page, not crash the app.
+    return value;
+  }
+}
+
 function readLocation(pathname) {
   const path = pathname.replace(/\/+$/, '') || '/';
-  const storyPage = path.match(/^\/stories\/([^/]+)$/);
-  const readerPage = path.match(/^\/read\/([^/]+)$/);
-  if (storyPage) return { kind: 'story', slug: decodeURIComponent(storyPage[1]) };
-  if (readerPage) return { kind: 'read', slug: decodeURIComponent(readerPage[1]) };
+  const storyPage = path.match(/^\/stories\/([^/]+)$/i);
+  const readerPage = path.match(/^\/read\/([^/]+)$/i);
+  if (storyPage) return { kind: 'story', slug: safeDecodeURIComponent(storyPage[1]).toLowerCase() };
+  if (readerPage) return { kind: 'read', slug: safeDecodeURIComponent(readerPage[1]).toLowerCase() };
   if (path === '/') return { kind: 'home', slug: null };
   return { kind: 'not-found', slug: null };
 }
@@ -65,13 +81,18 @@ function useSiteRouter() {
   const route = useMemo(() => readLocation(location.pathname), [location.pathname]);
 
   useEffect(() => {
+    let scrollTimer;
     if (location.hash.length > 1) {
-      window.setTimeout(() => {
-        document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const targetId = safeDecodeURIComponent(location.hash.slice(1));
+      scrollTimer = window.setTimeout(() => {
+        document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 70);
     } else {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
+    return () => {
+      if (scrollTimer) window.clearTimeout(scrollTimer);
+    };
   }, [location.pathname, location.hash]);
 
   const navigate = (to) => routerNavigate(to);
@@ -105,8 +126,8 @@ function Arrow({ diagonal = false, down = false }) {
 function Brand({ navigate }) {
   return (
     <InternalLink to="/" navigate={navigate} className="brand" aria-label="Soumik Halder — home">
-      <span className="brand__monogram" aria-hidden="true">SH</span>
-      <span className="brand__words"><span>Soumik Halder</span><small>Fiction &amp; the things we keep</small></span>
+      <span className="brand__monogram" aria-hidden="true">TWK</span>
+      <span className="brand__words"><span>The Things We Keep</span><small>Stories by Soumik Halder</small></span>
     </InternalLink>
   );
 }
@@ -123,10 +144,9 @@ function Header({ navigate, active = 'home' }) {
         </button>
         <nav className={`site-nav ${menuOpen ? 'site-nav--open' : ''}`} aria-label="Main navigation">
           <InternalLink to="/#stories" navigate={navigate} className={active === 'stories' ? 'is-active' : ''} onClick={closeMenu}>The stories</InternalLink>
-          <InternalLink to="/#about" navigate={navigate} onClick={closeMenu}>The collection</InternalLink>
-          <InternalLink to="/#book" navigate={navigate} onClick={closeMenu}>Editions</InternalLink>
+          <InternalLink to="/#threshold" navigate={navigate} onClick={closeMenu}>The idea</InternalLink>
           <InternalLink to="/about" navigate={navigate} onClick={closeMenu}>About</InternalLink>
-          <a className="site-nav__buy" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" onClick={closeMenu}>Find the book <Arrow diagonal /></a>
+          <a className="site-nav__buy" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" onClick={closeMenu}>Get the book <Arrow diagonal /></a>
         </nav>
       </div>
     </header>
@@ -144,6 +164,7 @@ function ImageLayer({ story, className = '' }) {
 }
 
 function StoryCard({ story, index, navigate }) {
+  const hasText = STORIES_WITH_TEXT.has(story.slug);
   return (
     <article className={`story-card story-card--${story.slug}`} style={{ '--story-accent': story.palette.accent, '--story-glow': story.palette.glow, '--story-surface': story.palette.surface }}>
       <InternalLink to={`/stories/${story.slug}`} navigate={navigate} className="story-card__link" aria-label={`Explore ${story.title}`}>
@@ -153,6 +174,7 @@ function StoryCard({ story, index, navigate }) {
           <span className="story-card__number">{String(index + 1).padStart(2, '0')}</span>
           <span className="story-card__format">{story.format}</span>
           <span className="story-card__motif">{story.motif}</span>
+          <span className="story-card__availability">{hasText ? (story.readingMode === 'full' ? 'FULL STORY · FREE' : 'READ PREVIEW') : 'IN THE COLLECTION'}</span>
           <span className="story-card__open" aria-hidden="true"><Arrow diagonal /></span>
         </div>
         <div className="story-card__copy">
@@ -196,137 +218,116 @@ function BookCover() {
 }
 
 function HomePage({ stories, navigate }) {
-  const lighthouse = BY_SLUG.get('the-lighthouse');
-  const collectionArt = [
-    BY_SLUG.get('the-girl-who-wanted-to-be-seen'),
-    BY_SLUG.get('durga'),
-    BY_SLUG.get('you-came-back'),
-    BY_SLUG.get('karam'),
-  ].filter(Boolean);
-  const [query, setQuery] = useState('');
-  const [activeTheme, setActiveTheme] = useState('All');
-  const themes = ['All', 'Guilt', 'Grief', 'Memory', 'Obsession', 'Identity', 'Betrayal', 'Power', 'Consequence'];
-  const filteredStories = stories.filter((story) => {
-    const search = query.trim().toLowerCase();
-    const matchesSearch = !search || [story.title, story.category, story.shortLine, story.synopsis, ...(story.themes || [])].join(' ').toLowerCase().includes(search);
-    const matchesTheme = activeTheme === 'All' || (story.themes || []).some((theme) => theme.toLowerCase().includes(activeTheme.toLowerCase()));
-    return matchesSearch && matchesTheme;
-  });
   return (
     <>
       <Header navigate={navigate} />
-      <main>
-        <section className="home-hero home-hero--collection" aria-labelledby="home-title">
-          <div className="home-hero__ambient" aria-hidden="true">
-            <span className="home-hero__orb home-hero__orb--one" />
-            <span className="home-hero__orb home-hero__orb--two" />
-            <span className="home-hero__rule home-hero__rule--one" />
-            <span className="home-hero__rule home-hero__rule--two" />
-            <span className="home-hero__grain" />
-          </div>
-          <div className="home-hero__inner">
-            <div className="home-hero__copy">
-              <p className="eyebrow"><span />Literary psychological horror</p>
-              <p className="home-hero__overline">NINE DARK WORLDS · ONE HUMAN SHADOW</p>
-              <h1 id="home-title">The Things<br /><em>We Keep.</em></h1>
-              <p className="home-hero__subtitle">Dark Tales of Guilt and Consequence</p>
-              <p className="home-hero__description">Memory lies. Grief bargains. Guilt learns to speak in our own voice. These stories begin where the ordinary world starts to feel wrong—and stay with what we cannot bear to leave behind.</p>
-              <div className="home-hero__actions">
-                <InternalLink to="/#stories" navigate={navigate} className="button button--light">Enter the collection <Arrow /></InternalLink>
-                <InternalLink to="/read/the-lighthouse" navigate={navigate} className="text-link text-link--light">Read one story in full <Arrow diagonal /></InternalLink>
-              </div>
-              <div className="home-hero__meta"><span>Eight short stories</span><i aria-hidden="true" /><span>One bonus novella</span><i aria-hidden="true" /><span>By Soumik Halder</span></div>
-              <p className="home-hero__note">Not every haunting begins with a ghost.</p>
-            </div>
-            <div className="home-hero__visual" aria-hidden="true">
-              <span className="home-hero__visual-kicker">AN ATLAS OF UNEASE</span>
-              {collectionArt.map((artStory, index) => (
-                <figure className={`home-art home-art--${index + 1}`} key={artStory.slug}>
-                  <img src={artStory.image} alt="" loading={index < 2 ? 'eager' : 'lazy'} decoding="async" onError={(event) => event.currentTarget.classList.add('home-art__failed')} />
-                  <span className="home-art__veil" />
-                  <figcaption><i>{String(index + 1).padStart(2, '0')}</i>{artStory.motif}</figcaption>
-                </figure>
-              ))}
-              <span className="home-hero__visual-caption">OBJECTS OF MEMORY / STUDIES IN CONSEQUENCE</span>
-              <span className="home-hero__visual-index" aria-hidden="true">TWK—09</span>
+      <main className="immersive-home">
+        <section className="presence-hero" aria-labelledby="home-title">
+          <img className="presence-hero__image" src={UNSPLASH_SCENES.hero} alt="" fetchPriority="high" decoding="async" onError={(event) => event.currentTarget.classList.add('asset-missing')} />
+          <div className="presence-hero__shade" aria-hidden="true" />
+          <div className="presence-hero__fog presence-hero__fog--one" aria-hidden="true" />
+          <div className="presence-hero__fog presence-hero__fog--two" aria-hidden="true" />
+          <div className="presence-hero__grain" aria-hidden="true" />
+          <div className="presence-hero__frame" aria-hidden="true"><span /><span /><span /></div>
+          <div className="presence-hero__content">
+            <p className="presence-hero__eyebrow" data-reveal style={{ '--reveal-delay': '100ms' }}>An anthology of psychological horror</p>
+            <h1 id="home-title" data-reveal style={{ '--reveal-delay': '260ms' }}>The Things<br /><em>We Keep.</em></h1>
+            <p className="presence-hero__tagline" data-reveal style={{ '--reveal-delay': '440ms' }}>Some secrets aren't buried.<br />They're preserved.</p>
+            <div className="presence-hero__actions" data-reveal style={{ '--reveal-delay': '590ms' }}>
+              <a className="presence-hero__enter" href="#stories">Enter the stories <span aria-hidden="true">↘</span></a>
+              <InternalLink to="/read/the-lighthouse" navigate={navigate} className="presence-hero__sample">Read the opening story <span aria-hidden="true">↗</span></InternalLink>
             </div>
           </div>
-          <a className="scroll-cue" href="#about"><span>Descend into the collection</span><Arrow down /></a>
-          <div className="home-hero__bottom-rule" />
+          <div className="presence-hero__side-note" aria-hidden="true"><span>09 STORIES</span><i /><span>01 OBSESSION</span></div>
+          <a className="presence-hero__scroll" href="#threshold" aria-label="Scroll to begin"><span>Keep going</span><i /></a>
+          <span className="presence-hero__counter" aria-hidden="true">I — IX</span>
         </section>
 
-        <section id="about" className="manifesto section-wrap">
-          <div className="manifesto__index">A NOTE ON WHAT REMAINS <span>— 01</span></div>
-          <div className="manifesto__body">
-            <p className="manifesto__lead">The frightening thing is not always what comes back.</p>
-            <p className="manifesto__lead manifesto__lead--muted">Sometimes, it is what never truly left.</p>
-            <p className="manifesto__description">Across nine worlds, love becomes obsession, memory turns unreliable, and the past refuses to stay buried. These are stories about the fragile things we try to save—and the consequences we carry when we cannot let go.</p>
+        <section id="threshold" className="threshold-scene" aria-label="About the collection">
+          <div className="threshold-scene__left" data-reveal>
+            <p className="threshold-scene__eyebrow">Before anything becomes a haunting</p>
+            <h2>It starts with<br /><em>something ordinary.</em></h2>
           </div>
-          <div className="manifesto__seal" aria-hidden="true"><span>THE THINGS</span><b>WE KEEP</b><i /></div>
+          <div className="threshold-scene__right" data-reveal style={{ '--reveal-delay': '160ms' }}>
+            <p>Someone we loved. A room we know by heart. A memory that changes each time we touch it.</p>
+            <p>Then, one detail refuses to fit. And the familiar world begins to turn against us.</p>
+          </div>
+          <div className="threshold-scene__trace" aria-hidden="true"><span /><span /><span /></div>
+          <div className="threshold-scene__index" aria-hidden="true">A NOTE ON WHAT REMAINS&nbsp; / &nbsp;01</div>
         </section>
 
-        <section id="stories" className="stories-section section-wrap">
-          <div className="stories-section__topline"><span>THE ARCHIVE</span><span>09 WORLDS · 01 COLLECTION</span></div>
-          <SectionHeading eyebrow="Choose a door" title={<>Every story leaves<br /><em>something behind.</em></>} body="Enter a different atmosphere with every story. Explore the premise, the themes, and the secrets waiting inside the collection." />
-          <div className="archive-controls" aria-label="Filter the story archive">
-            <label className="archive-search"><span className="sr-only">Search stories</span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" strokeWidth="1.5"/><path d="m16 16 4.3 4.3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search a title, feeling, or theme…" /></label>
-            <div className="archive-filters" role="group" aria-label="Filter by theme">{themes.map((theme) => <button key={theme} type="button" className={activeTheme === theme ? 'is-active' : ''} aria-pressed={activeTheme === theme} onClick={() => setActiveTheme(theme)}>{theme}</button>)}</div>
-            <button type="button" className="archive-surprise" onClick={() => { const pool = filteredStories.length ? filteredStories : stories; const chosen = pool[Math.floor(Math.random() * pool.length)]; if (chosen) navigate(`/stories/${chosen.slug}`); }}>Choose a door for me <Arrow diagonal /></button>
+        <section id="stories" className="story-corridor" aria-labelledby="story-corridor-title">
+          <header className="story-corridor__opening" data-reveal>
+            <p className="story-corridor__eyebrow"><span />Nine stories. Nine kinds of unease.</p>
+            <h2 id="story-corridor-title">Nothing here is<br /><em>quite what it seems.</em></h2>
+            <p>Move slowly. The details matter.</p>
+          </header>
+          <div className="story-corridor__scenes">
+            {stories.map((story, index) => (
+              <article className={`story-encounter story-encounter--${index % 3 === 0 ? 'wide' : index % 3 === 1 ? 'close' : 'quiet'}`} key={story.slug} style={{ '--scene-accent': story.palette.accent, '--scene-index': index }}>
+                <InternalLink to={`/stories/${story.slug}`} navigate={navigate} className={`story-encounter__link ${index % 2 ? 'story-encounter__link--reverse' : ''}`} aria-label={`Enter ${story.title}`}>
+                  <figure className="story-encounter__image" data-reveal style={{ '--reveal-delay': `${Math.min(index % 3, 2) * 90}ms` }}>
+                    <img src={story.image} alt={story.imageAlt} loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('asset-missing')} />
+                    <span className="story-encounter__image-shade" aria-hidden="true" />
+                    <span className="story-encounter__image-index" aria-hidden="true">{String(index + 1).padStart(2, '0')} <i /> 09</span>
+                    <figcaption>{story.motif}</figcaption>
+                  </figure>
+                  <div className="story-encounter__copy" data-reveal style={{ '--reveal-delay': `${140 + (index % 3) * 100}ms` }}>
+                    <span className="story-encounter__number">{String(index + 1).padStart(2, '0')}<i /></span>
+                    <p className="story-encounter__category">{story.category}</p>
+                    <h3>{story.title}</h3>
+                    <p className="story-encounter__line">{story.detailLine || story.shortLine}</p>
+                    <p className="story-encounter__description">{story.shortLine}</p>
+                    <span className="story-encounter__enter">Step inside <b aria-hidden="true">↗</b></span>
+                  </div>
+                </InternalLink>
+              </article>
+            ))}
           </div>
-          <div className="story-grid">
-            {filteredStories.map((story) => <StoryCard key={story.slug} story={story} index={stories.findIndex((item) => item.slug === story.slug)} navigate={navigate} />)}
-          </div>
-          {filteredStories.length === 0 && <p className="archive-empty">No story matches that combination. Try another word or theme.</p>}
-          <p className="stories-section__note"><span aria-hidden="true">✳</span> The Lighthouse is available to read in full, for free. Other stories offer the previews currently available in their text files.</p>
         </section>
 
-        <section className="sample-feature sample-feature--editorial" aria-labelledby="sample-title">
-          <div className="sample-feature__inner section-wrap">
-            <div className="sample-feature__index"><span>THE OPENING DOOR</span><span>FREE · 01 / 09</span></div>
-            <div className="sample-feature__copy">
-              <p className="eyebrow"><span />A complete story · freely available</p>
-              <h2 id="sample-title">The Lighthouse</h2>
-              <p className="sample-feature__deck">A night that keeps returning. A mind that cannot escape what it knows.</p>
-              <blockquote>“The first thud struck the heavy steel door with the sickening finality of a hammer descending on bone.”</blockquote>
-              <InternalLink to="/read/the-lighthouse" navigate={navigate} className="button button--light">Read the complete story <Arrow /></InternalLink>
+        <section className="quiet-interval" aria-label="A pause between stories">
+          <div className="quiet-interval__hairline" aria-hidden="true" />
+          <p data-reveal>Fear rarely arrives as a stranger.</p>
+          <h2 data-reveal style={{ '--reveal-delay': '160ms' }}>Sometimes it knows<br /><em>where you keep the key.</em></h2>
+          <span className="quiet-interval__grain" aria-hidden="true" />
+          <div className="quiet-interval__hairline" aria-hidden="true" />
+        </section>
+
+        <section className="opening-door" aria-labelledby="opening-door-title">
+          <img className="opening-door__image" src={UNSPLASH_SCENES.lighthouseDetail} alt="" loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('asset-missing')} />
+          <div className="opening-door__shade" aria-hidden="true" />
+          <div className="opening-door__content" data-reveal>
+            <p className="opening-door__eyebrow">The opening door · available to read in full</p>
+            <h2 id="opening-door-title">The Lighthouse</h2>
+            <p>A locked steel door. A storm outside. A night that keeps returning to the beginning.</p>
+            <InternalLink to="/read/the-lighthouse" navigate={navigate} className="opening-door__link">Enter the story <span aria-hidden="true">→</span></InternalLink>
+          </div>
+          <span className="opening-door__caption" aria-hidden="true">01 / 09&nbsp; — &nbsp;THE LIGHTHOUSE</span>
+        </section>
+
+        <section className="collection-afterimage" aria-label="The collection">
+          <img className="collection-afterimage__image" src={UNSPLASH_SCENES.epilogue} alt="" loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('asset-missing')} />
+          <div className="collection-afterimage__shade" aria-hidden="true" />
+          <div className="collection-afterimage__words" data-reveal>
+            <p>Eight short stories. One bonus novella.</p>
+            <blockquote>“What we keep<br />can keep us, too.”</blockquote>
+            <span>THE THINGS WE KEEP · SOUMIK HALDER</span>
+          </div>
+        </section>
+
+        <section id="book" className="book-threshold section-wrap" data-reveal>
+          <div className="book-threshold__copy">
+            <p className="book-threshold__eyebrow">The complete collection</p>
+            <h2>The story does not<br /><em>end here.</em></h2>
+            <p><strong>The Things We Keep: Dark Tales of Guilt and Consequence</strong> brings together nine unsettling worlds of grief, memory, obsession, sacrifice and the cost of the things we cannot release.</p>
+            <div className="book-threshold__actions">
+              <a className="book-threshold__primary" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the Kindle edition <span aria-hidden="true">↗</span></a>
+              <a className="book-threshold__secondary" href={BOOK.kindleGlobal} target="_blank" rel="noreferrer noopener">Other Amazon stores</a>
+              <a className="book-threshold__secondary" href={BOOK.hardcoverIndia} target="_blank" rel="noreferrer noopener">India hardcover enquiry</a>
             </div>
-            <figure className="sample-feature__art">
-              <div className="sample-feature__art-frame">
-                <img src={lighthouse.image} alt={lighthouse.imageAlt} loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('sample-feature__art-failed')} />
-                <span aria-hidden="true" />
-              </div>
-              <figcaption>01 — THE LIGHTHOUSE <i>READ IN FULL</i></figcaption>
-            </figure>
           </div>
-          <span className="sample-feature__watermark" aria-hidden="true">A FREE READING</span>
-        </section>
-
-        <section id="book" className="book-section section-wrap">
-          <div className="book-section__topline"><span>THE COMPLETE COLLECTION</span><span>BY SOUMIK HALDER</span></div>
-          <div className="book-section__layout">
-            <BookCover />
-            <div className="book-section__copy">
-              <p className="eyebrow"><span />The book</p>
-              <h2>Some stories<br />stay <em>with you.</em></h2>
-              <p className="book-section__subtitle">The Things We Keep <span>—</span> Dark Tales of Guilt and Consequence</p>
-              <p className="book-section__description">Eight short stories and one bonus novella. Psychological horror, gothic mysteries and dark human dramas about grief, memory, sacrifice, obsession, and the price of our choices.</p>
-              <div className="theme-line" aria-label="Collection themes"><span>Guilt</span><i /><span>Memory</span><i /><span>Grief</span><i /><span>Consequence</span></div>
-              <div className="book-section__actions">
-                <a className="button button--light" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the Kindle edition <Arrow diagonal /></a>
-                <a className="button button--outline" href={BOOK.kindleGlobal} target="_blank" rel="noreferrer noopener">Other Amazon stores <Arrow diagonal /></a>
-                <a className="book-section__print-link" href={BOOK.hardcoverIndia} target="_blank" rel="noreferrer noopener">Ask about the India hardcover <Arrow diagonal /></a>
-              </div>
-              <p className="book-section__fineprint">Digital edition links open Amazon. Hardcover enquiries are handled separately.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="closing-note">
-          <div className="closing-note__rule" />
-          <p>Some things are lost. Some are buried.</p>
-          <h2>What we keep<br /><em>keeps us, too.</em></h2>
-          <InternalLink to="/#stories" navigate={navigate} className="text-link">Return to the stories <Arrow /></InternalLink>
-          <div className="closing-note__rule" />
+          <BookCover />
         </section>
       </main>
       <Footer navigate={navigate} />
@@ -337,6 +338,31 @@ function HomePage({ stories, navigate }) {
 function StoryPage({ story, navigate }) {
   const storyIndex = STORIES.findIndex((item) => item.slug === story.slug);
   const hasText = STORIES_WITH_TEXT.has(story.slug);
+  const storyPageRef = useRef(null);
+  const [imageInspected, setImageInspected] = useState(false);
+  const [selectedMotif, setSelectedMotif] = useState(null);
+
+  useEffect(() => {
+    setImageInspected(false);
+    setSelectedMotif(null);
+  }, [story.slug]);
+
+  useEffect(() => {
+    const page = storyPageRef.current;
+    if (!page) return undefined;
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+      page.style.setProperty('--story-page-progress', String(progress));
+    };
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    return () => {
+      window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
+    };
+  }, [story.slug]);
   const previous = STORIES[(storyIndex - 1 + STORIES.length) % STORIES.length];
   const next = STORIES[(storyIndex + 1) % STORIES.length];
   const themeStyle = {
@@ -346,38 +372,74 @@ function StoryPage({ story, navigate }) {
     '--story-surface': story.palette.surface,
   };
   return (
-    <div className="story-page" style={themeStyle}>
+    <div className="story-page" ref={storyPageRef} style={{ ...themeStyle, '--story-page-progress': 0 }}>
+      <div className="story-page__progress" aria-hidden="true"><span /></div>
       <Header navigate={navigate} active="stories" />
       <main>
-        <section className="story-page__hero">
+        <section
+          className="story-page__hero"
+          onPointerMove={(event) => {
+            if (event.pointerType === 'touch' || window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return;
+            const bounds = event.currentTarget.getBoundingClientRect();
+            const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+            const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+            event.currentTarget.style.setProperty('--story-shift-x', `${-x * 15}px`);
+            event.currentTarget.style.setProperty('--story-shift-y', `${-y * 10}px`);
+          }}
+          onPointerLeave={(event) => {
+            event.currentTarget.style.setProperty('--story-shift-x', '0px');
+            event.currentTarget.style.setProperty('--story-shift-y', '0px');
+          }}
+        >
           <ImageLayer story={story} className="story-page__backdrop" />
           <div className="story-page__hero-veil" aria-hidden="true" />
           <div className="story-page__hero-inner section-wrap">
             <InternalLink to="/#stories" navigate={navigate} className="back-link"><span>←</span> All stories</InternalLink>
             <div className="story-page__hero-copy">
-              <p className="eyebrow"><span />{String(storyIndex + 1).padStart(2, '0')} / 09 <i /> {story.format}</p>
-              <h1>{story.title}</h1>
-              <p className="story-page__category">{story.category}</p>
-              <p className="story-page__tagline">{story.detailLine}</p>
+              <p className="eyebrow" data-reveal style={{ '--reveal-delay': '120ms' }}><span />{String(storyIndex + 1).padStart(2, '0')} / 09 <i /> {story.format}</p>
+              <h1 data-reveal style={{ '--reveal-delay': '260ms' }}>{story.title}</h1>
+              <p className="story-page__category" data-reveal style={{ '--reveal-delay': '390ms' }}>{story.category}</p>
+              <p className="story-page__tagline" data-reveal style={{ '--reveal-delay': '510ms' }}>{story.detailLine}</p>
+              <InternalLink to="#story-details" navigate={navigate} className="story-page__enter" data-reveal style={{ '--reveal-delay': '660ms' }}>Move closer <span aria-hidden="true">↓</span></InternalLink>
             </div>
             <div className="story-page__hero-foot"><span>THE THINGS WE KEEP</span><span>{story.motif}</span></div>
           </div>
         </section>
 
-        <section className="story-page__body section-wrap">
+
+        <section id="story-details" className="story-page__body section-wrap">
           <div className="story-page__main-copy">
-            <p className="eyebrow"><span />The story</p>
-            <h2>{story.shortLine}</h2>
+            <p className="eyebrow" data-reveal style={{ '--reveal-delay': '70ms' }}><span />The story</p>
+            <h2 data-reveal style={{ '--reveal-delay': '170ms' }}>{story.shortLine}</h2>
             {story.needsEditorialReview ? (
-              <p className="story-page__synopsis">The story-specific description will be added once its premise and themes are confirmed.</p>
+              <p className="story-page__synopsis" data-reveal style={{ '--reveal-delay': '290ms' }}>The story-specific description will be added once its premise and themes are confirmed.</p>
             ) : (
-              <p className="story-page__synopsis">{story.synopsis}</p>
+              <p className="story-page__synopsis" data-reveal style={{ '--reveal-delay': '290ms' }}>{story.synopsis}</p>
             )}
-            {!story.needsEditorialReview && story.themes.length > 0 && <div className="story-page__themes"><span className="story-page__themes-label">Threads within</span>{story.themes.map((theme) => <span key={theme} className="theme-chip">{theme}</span>)}</div>}
-            {story.underneath && <div className="story-deep-note"><span className="story-deep-note__eyebrow">BENEATH THE SURFACE</span><p>{story.underneath}</p></div>}
-            {story.visualMotifs?.length > 0 && <div className="story-motifs"><span className="story-page__themes-label">Visual language</span>{story.visualMotifs.map((motif, index) => <span className="story-motif" key={motif}><i>{String(index + 1).padStart(2, '0')}</i>{motif}</span>)}</div>}
-            {story.coreQuestion && <details className="story-question"><summary>One question to carry with you <span>+</span></summary><p>{story.coreQuestion}</p></details>}
-            <div className="story-page__actions">
+            {!story.needsEditorialReview && story.themes.length > 0 && <div className="story-page__themes" data-reveal style={{ '--reveal-delay': '400ms' }}><span className="story-page__themes-label">Threads within</span>{story.themes.map((theme) => <span key={theme} className="theme-chip">{theme}</span>)}</div>}
+            {story.underneath && <div className="story-deep-note" data-reveal style={{ '--reveal-delay': '490ms' }}><span className="story-deep-note__eyebrow">BENEATH THE SURFACE</span><p>{story.underneath}</p></div>}
+            {story.visualMotifs?.length > 0 && (
+              <div className="story-motifs" data-reveal style={{ '--reveal-delay': '570ms' }}>
+                <span className="story-page__themes-label">Details that linger · choose one to keep in mind</span>
+                <div className="story-motifs__choices">
+                  {story.visualMotifs.map((motif, index) => (
+                    <button
+                      type="button"
+                      className={`story-motif ${selectedMotif === index ? 'is-selected' : ''}`}
+                      key={motif}
+                      aria-pressed={selectedMotif === index}
+                      onClick={() => setSelectedMotif((current) => current === index ? null : index)}
+                    >
+                      <i>{String(index + 1).padStart(2, '0')}</i><span>{motif}</span><b aria-hidden="true">↗</b>
+                    </button>
+                  ))}
+                </div>
+                <p className="story-motifs__reflection" aria-live="polite">
+                  {selectedMotif === null ? 'Choose a detail. Let it follow you into the story.' : `Keep this detail close: ${story.visualMotifs[selectedMotif]}.`}
+                </p>
+              </div>
+            )}
+            <div className="story-page__actions" data-reveal style={{ '--reveal-delay': '650ms' }}>
               {hasText ? (
                 <InternalLink to={`/read/${story.slug}`} navigate={navigate} className="button button--light">{story.readingMode === 'full' ? 'Read the complete story — free' : 'Read the available preview'} <Arrow /></InternalLink>
               ) : (
@@ -386,26 +448,33 @@ function StoryPage({ story, navigate }) {
               <InternalLink to="/#book" navigate={navigate} className="text-link">Explore editions <Arrow /></InternalLink>
             </div>
           </div>
-          <figure className="story-page__figure">
-            <div className="story-page__figure-frame">
+          <figure className={`story-page__figure ${imageInspected ? 'is-inspected' : ''}`} data-reveal style={{ '--reveal-delay': '140ms' }}>
+            <div className={`story-page__figure-frame ${imageInspected ? 'is-inspected' : ''}`}>
               <img src={story.detailImage?.src || story.image} alt={story.detailImage?.alt || story.imageAlt} loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('image-layer__failed')} />
               <span className="story-page__figure-label">{story.detailImage?.caption || story.motif}</span>
+              <span className="story-page__figure-index" aria-hidden="true">FIG. {String(storyIndex + 1).padStart(2, '0')}</span>
+              <span className="story-page__figure-focus" aria-hidden="true" />
             </div>
-            <figcaption>{story.detailImage?.alt || story.imageAlt}. Atmospheric image reference from <a href="https://unsplash.com" target="_blank" rel="noreferrer noopener">Unsplash</a>.</figcaption>
+            <button type="button" className="story-page__inspect" onClick={() => setImageInspected((value) => !value)} aria-pressed={imageInspected}>
+              <span className="story-page__inspect-symbol" aria-hidden="true">{imageInspected ? '−' : '+'}</span>
+              {imageInspected ? 'Return to the wider view' : 'Look closer at this image'}
+              <span className="story-page__inspect-arrow" aria-hidden="true">↗</span>
+            </button>
+            <figcaption>{story.detailImage?.caption || story.motif}</figcaption>
           </figure>
         </section>
 
-        <section className="story-page__book-strip">
+        <section className="story-page__book-strip" data-reveal>
           <div className="section-wrap story-page__book-inner">
             <div><p className="eyebrow"><span />Inside the collection</p><h2>{story.readingMode === 'full' ? 'Keep wandering through the dark.' : 'The rest of the collection is waiting.'}</h2></div>
             <a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" className="button button--light">Find the book <Arrow diagonal /></a>
           </div>
         </section>
 
-        <section className="story-pager section-wrap" aria-label="Explore another story">
-          <InternalLink to={`/stories/${previous.slug}`} navigate={navigate} className="story-pager__item"><span>← Previous door</span><strong>{previous.title}</strong></InternalLink>
-          <InternalLink to="/#stories" navigate={navigate} className="story-pager__index">All nine stories <span>Archive index ↗</span></InternalLink>
-          <InternalLink to={`/stories/${next.slug}`} navigate={navigate} className="story-pager__item story-pager__item--next"><span>Next door →</span><strong>{next.title}</strong></InternalLink>
+        <section id="story-end" className="story-pager section-wrap" aria-label="Explore another story">
+          <InternalLink to={`/stories/${previous.slug}`} navigate={navigate} className="story-pager__item"><span className="story-pager__art"><img src={previous.image} alt="" loading="lazy" decoding="async" /></span><span>← Previous door</span><strong>{previous.title}</strong></InternalLink>
+          <InternalLink to="/#stories" navigate={navigate} className="story-pager__index">All nine stories <span>Return to the collection ↗</span></InternalLink>
+          <InternalLink to={`/stories/${next.slug}`} navigate={navigate} className="story-pager__item story-pager__item--next"><span className="story-pager__art"><img src={next.image} alt="" loading="lazy" decoding="async" /></span><span>Next door →</span><strong>{next.title}</strong></InternalLink>
         </section>
       </main>
       <Footer navigate={navigate} />
@@ -483,19 +552,30 @@ function ReaderPage({ story, navigate }) {
           <InternalLink to={`/stories/${story.slug}`} navigate={navigate} className="back-link"><span>←</span> Back to the story</InternalLink>
           <div className="reader-page__meta"><span>{hasFullText ? 'FULL STORY · FREE TO READ' : 'AVAILABLE PREVIEW'}</span><span>{String(STORIES.findIndex((item) => item.slug === story.slug) + 1).padStart(2, '0')} / 09 · THE THINGS WE KEEP</span></div>
         </div>
-        <article className="reader-article">
-          <header className="reader-article__header">
-            <p className="eyebrow"><span />{hasFullText ? 'A complete story, freely shared' : 'A glimpse into this story'}</p>
+        <section className="reader-threshold" aria-label={`Enter ${story.title}`}>
+          <img className="reader-threshold__image" src={story.image} alt={story.imageAlt} fetchPriority="high" decoding="async" onError={(event) => event.currentTarget.classList.add('asset-missing')} />
+          <div className="reader-threshold__shade" aria-hidden="true" />
+          <div className="reader-threshold__grain" aria-hidden="true" />
+          <div className="reader-threshold__content" data-reveal>
+            <p className="eyebrow"><span />{String(STORIES.findIndex((item) => item.slug === story.slug) + 1).padStart(2, '0')} / 09 <i /> {hasFullText ? 'A complete story, freely shared' : 'A glimpse into this story'}</p>
             <h1>{story.title}</h1>
-            <p>{story.shortLine}</p>
+            <p className="reader-threshold__line">{story.shortLine}</p>
+            <a className="reader-threshold__begin" href="#reading-text">{hasFullText ? 'Begin the story' : 'Enter the preview'} <span aria-hidden="true">↓</span></a>
+          </div>
+          <div className="reader-threshold__foot"><span>THE THINGS WE KEEP</span><span>{story.motif}</span><button type="button" onClick={() => setLightbox({ src: story.image, alt: story.imageAlt, caption: `${story.title} — visual frontispiece` })}>View image <span aria-hidden="true">↗</span></button></div>
+        </section>
+        <article id="reading-text" className="reader-article">
+          <header className="reader-article__header" data-reveal>
+            <p className="eyebrow"><span />{hasFullText ? 'Stay with the story' : 'The available passage'}</p>
+            <p className="reader-article__opening-line">{story.detailLine || story.shortLine}</p>
             <div className="reader-article__ornament" aria-hidden="true">✳</div>
           </header>
           {hasSample ? (
             <div className="reader-article__text">
-              {readerSegments.map((segment) => segment.type === 'paragraph' ? (
-                <p key={`${story.slug}-${segment.key}`}>{segment.text}</p>
+              {readerSegments.map((segment, segmentIndex) => segment.type === 'paragraph' ? (
+                <p key={`${story.slug}-${segment.key}`} data-reveal style={{ '--reveal-delay': `${Math.min(segmentIndex % 4, 3) * 35}ms` }}>{segment.text}</p>
               ) : (
-                <figure className={`reader-plate reader-plate--${segment.image.layout || 'wide'}`} key={`${story.slug}-${segment.key}`}>
+                <figure className={`reader-plate reader-plate--${segment.image.layout || 'wide'}`} key={`${story.slug}-${segment.key}`} data-reveal style={{ '--reveal-delay': `${Math.min(segmentIndex % 3, 2) * 65}ms` }}>
                   <button className="reader-plate__trigger" type="button" onClick={() => setLightbox(segment.image)} aria-label={`Enlarge image: ${segment.image.caption}`}>
                     <img src={segment.image.src} alt={segment.image.alt} loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('reader-plate__failed')} />
                     <span className="reader-plate__zoom" aria-hidden="true">↗</span>
@@ -503,7 +583,7 @@ function ReaderPage({ story, navigate }) {
                   <figcaption><span>{segment.image.caption}</span><small>FIG. {String((story.readerImages || []).indexOf(segment.image) + 1).padStart(2, '0')}</small></figcaption>
                 </figure>
               ))}
-              <div className="reader-article__ending">
+              <div className="reader-article__ending" data-reveal>
                 <span>{hasFullText ? 'END OF STORY' : 'THE SAMPLE ENDS HERE'}</span>
                 <h2>{hasFullText ? 'Thank you for reading.' : 'There is more beyond this door.'}</h2>
                 <p>{hasFullText ? 'The other doors are open. Find the story that stays with you next.' : 'This preview ends here. The complete story belongs to the collection.'}</p>
@@ -511,7 +591,7 @@ function ReaderPage({ story, navigate }) {
               </div>
             </div>
           ) : (
-            <div className="reader-article__locked">
+            <div className="reader-article__locked" data-reveal>
               <span className="reader-article__lockmark" aria-hidden="true">✳</span>
               <h2>This story awaits inside the collection.</h2>
               <p>We are keeping the full digital text with the book for now. Discover the story in <em>The Things We Keep</em>.</p>
@@ -528,8 +608,12 @@ function ReaderPage({ story, navigate }) {
             </figure>
           </div>
         )}
+        <div className="reader-story-nav-heading section-wrap" data-reveal>
+          <p className="eyebrow"><span />When you are ready</p>
+          <h2>Another door remains open.</h2>
+        </div>
         <nav className="reader-story-nav section-wrap" aria-label="Navigate between stories">
-          {STORIES.map((item, index) => <InternalLink key={item.slug} to={`/stories/${item.slug}`} navigate={navigate} className={item.slug === story.slug ? 'is-current' : ''}><span>{String(index + 1).padStart(2, '0')}</span>{item.title}</InternalLink>)}
+          {STORIES.map((item, index) => <InternalLink key={item.slug} to={`/stories/${item.slug}`} navigate={navigate} className={item.slug === story.slug ? 'is-current' : ''}><span className="reader-story-nav__thumb"><img src={item.image} alt="" loading="lazy" decoding="async" /></span><span className="reader-story-nav__number">{String(index + 1).padStart(2, '0')}</span><span className="reader-story-nav__title">{item.title}</span><span className="reader-story-nav__arrow" aria-hidden="true">↗</span></InternalLink>)}
         </nav>
       </main>
       <Footer navigate={navigate} />
@@ -540,18 +624,19 @@ function ReaderPage({ story, navigate }) {
 function Footer({ navigate }) {
   return (
     <footer className="site-footer">
+      <div className="site-footer__afterimage" aria-hidden="true"><span /><span /><span /></div>
       <div className="site-footer__top section-wrap">
         <Brand navigate={navigate} />
-        <p>Dark tales of guilt and consequence.</p>
-        <div className="site-footer__links"><InternalLink to="/about" navigate={navigate}>About the author</InternalLink><InternalLink to="/#stories" navigate={navigate} className="footer-back-top">Explore the stories ↑</InternalLink></div>
+        <p>Some things are lost.<br /><em>Some things refuse to leave.</em></p>
+        <div className="site-footer__links">
+          <InternalLink to="/#stories" navigate={navigate}>Enter the stories</InternalLink>
+          <InternalLink to="/about" navigate={navigate}>About the author</InternalLink>
+          <a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the book ↗</a>
+        </div>
       </div>
-      <nav className="site-footer__directory section-wrap" aria-label="All stories">
-        {STORIES.map((story, index) => <InternalLink key={story.slug} to={`/stories/${story.slug}`} navigate={navigate}><span>{String(index + 1).padStart(2, '0')}</span>{story.title}</InternalLink>)}
-      </nav>
       <div className="site-footer__bottom section-wrap">
         <span>© {new Date().getFullYear()} Soumik Halder</span>
-        <span>Atmospheric photography via <a href="https://unsplash.com" target="_blank" rel="noreferrer noopener">Unsplash</a></span>
-        <a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the book ↗</a>
+        <span>THE THINGS WE KEEP · DARK TALES OF GUILT AND CONSEQUENCE</span>
       </div>
     </footer>
   );
@@ -579,6 +664,29 @@ export default function App() {
       delete document.documentElement.dataset.page;
       delete document.documentElement.dataset.story;
     };
+  }, [route.kind, currentStory?.slug]);
+
+  useEffect(() => {
+    const targets = [...document.querySelectorAll('[data-reveal]')];
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      targets.forEach((target) => target.classList.add('is-revealed'));
+      return undefined;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+    targets.forEach((target) => {
+      // React may reuse same-page elements when the slug changes; reset reveal state per route.
+      target.classList.remove('is-revealed');
+      observer.observe(target);
+    });
+    return () => observer.disconnect();
   }, [route.kind, currentStory?.slug]);
 
   if (route.kind === 'home') return <HomePage stories={STORIES} navigate={navigate} />;

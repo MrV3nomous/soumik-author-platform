@@ -1,8 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-const storyModules = import.meta.glob('./content/stories/*.json', { eager: true, import: 'default' });
-const STORIES = Object.values(storyModules).sort((a, b) => a.order - b.order);
 
 const BOOK = {
   kindleIndia: 'https://www.amazon.in/dp/B0HML17SSR',
@@ -24,18 +21,17 @@ function AuthorHeader() {
     <header className="site-header">
       <div className="site-header__inner">
         <Link to="/" className="brand" aria-label="Soumik Halder — home">
-          <span className="brand__monogram" aria-hidden="true">SH</span>
-          <span className="brand__words"><span>Soumik Halder</span><small>Fiction &amp; the things we keep</small></span>
+          <span className="brand__monogram" aria-hidden="true">TWK</span>
+          <span className="brand__words"><span>The Things We Keep</span><small>Stories by Soumik Halder</small></span>
         </Link>
         <button className={`menu-toggle ${menuOpen ? 'is-open' : ''}`} type="button" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
           <span /><span />
         </button>
         <nav className={`site-nav ${menuOpen ? 'site-nav--open' : ''}`} aria-label="Main navigation">
           <Link to="/#stories" onClick={closeMenu}>The stories</Link>
-          <Link to="/#about" onClick={closeMenu}>The collection</Link>
-          <Link to="/#book" onClick={closeMenu}>Editions</Link>
+          <Link to="/#threshold" onClick={closeMenu}>The idea</Link>
           <Link to="/about" className="is-active" onClick={closeMenu}>About</Link>
-          <a className="site-nav__buy" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" onClick={closeMenu}>Find the book <Arrow diagonal /></a>
+          <a className="site-nav__buy" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" onClick={closeMenu}>Get the book <Arrow diagonal /></a>
         </nav>
       </div>
     </header>
@@ -45,38 +41,52 @@ function AuthorHeader() {
 function AuthorFooter() {
   return (
     <footer className="site-footer">
+      <div className="site-footer__afterimage" aria-hidden="true"><span /><span /><span /></div>
       <div className="site-footer__top section-wrap">
-        <Link to="/" className="brand" aria-label="Soumik Halder — home">
-          <span className="brand__monogram" aria-hidden="true">SH</span>
-          <span className="brand__words"><span>Soumik Halder</span><small>Fiction &amp; the things we keep</small></span>
+        <Link to="/" className="brand" aria-label="The Things We Keep — home">
+          <span className="brand__monogram" aria-hidden="true">TWK</span>
+          <span className="brand__words"><span>The Things We Keep</span><small>Stories by Soumik Halder</small></span>
         </Link>
-        <p>Dark tales of guilt and consequence.</p>
-        <div className="site-footer__links"><Link to="/about">About the author</Link><Link to="/#stories" className="footer-back-top">Explore the stories ↑</Link></div>
+        <p>Some things are lost.<br /><em>Some things refuse to leave.</em></p>
+        <div className="site-footer__links"><Link to="/#stories">Enter the stories</Link><Link to="/about">About the author</Link><a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the book ↗</a></div>
       </div>
-      <nav className="site-footer__directory section-wrap" aria-label="All stories">
-        {STORIES.map((story, index) => <Link key={story.slug} to={`/stories/${story.slug}`}><span>{String(index + 1).padStart(2, '0')}</span>{story.title}</Link>)}
-      </nav>
-      <div className="site-footer__bottom section-wrap">
-        <span>© {new Date().getFullYear()} Soumik Halder</span>
-        <span>Atmospheric photography via <a href="https://unsplash.com" target="_blank" rel="noreferrer noopener">Unsplash</a></span>
-        <a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the book ↗</a>
-      </div>
+      <div className="site-footer__bottom section-wrap"><span>© {new Date().getFullYear()} Soumik Halder</span><span>THE THINGS WE KEEP · DARK TALES OF GUILT AND CONSEQUENCE</span></div>
     </footer>
   );
 }
 
 export default function About() {
+  useEffect(() => {
+    const targets = [...document.querySelectorAll('[data-reveal]')];
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      targets.forEach((target) => target.classList.add('is-revealed'));
+      return undefined;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+    targets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="about-page">
       <AuthorHeader />
       <main>
         <section className="about-hero">
           <div className="about-hero__background" aria-hidden="true">
+            <img className="about-hero__image" src="https://images.unsplash.com/photo-1637081182843-f89af4fbe51e?auto=format&fit=crop&w=2600&q=86&crop=entropy" alt="" loading="eager" decoding="async" onError={(event) => event.currentTarget.classList.add('asset-missing')} />
             <span className="about-hero__orb about-hero__orb--one" />
             <span className="about-hero__orb about-hero__orb--two" />
             <span className="about-hero__grain" />
           </div>
-          <div className="about-hero__inner section-wrap">
+          <div className="about-hero__inner section-wrap" data-reveal>
             <p className="eyebrow"><span />THE WRITER BEHIND THE STORIES</p>
             <p className="about-hero__overline">A NOTE FROM THE AUTHOR</p>
             <h1>Some things<br />follow us <em>home.</em></h1>
@@ -85,7 +95,7 @@ export default function About() {
           </div>
         </section>
 
-        <section className="about-note section-wrap">
+        <section className="about-note section-wrap" data-reveal>
           <div className="about-note__index">ON STORIES <span>— 01</span></div>
           <div className="about-note__body">
             <h2>I’m interested in what a person cannot put down.</h2>
@@ -95,7 +105,7 @@ export default function About() {
           <div className="about-note__mark" aria-hidden="true">“</div>
         </section>
 
-        <section className="about-book">
+        <section className="about-book" data-reveal>
           <div className="about-book__inner section-wrap">
             <div>
               <p className="eyebrow"><span />THE DEBUT COLLECTION</p>
@@ -109,7 +119,7 @@ export default function About() {
             </div>
           </div>
         </section>
-        <section className="about-closing section-wrap">
+        <section className="about-closing section-wrap" data-reveal>
           <p className="eyebrow"><span />THANK YOU FOR READING</p>
           <h2>Keep the light on.<br /><em>Or don’t.</em></h2>
           <p>There are nine doors into this collection. You know where to begin.</p>
