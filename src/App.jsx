@@ -126,7 +126,9 @@ function Arrow({ diagonal = false, down = false }) {
 function Brand({ navigate }) {
   return (
     <InternalLink to="/" navigate={navigate} className="brand" aria-label="Soumik Halder — home">
-      <span className="brand__monogram" aria-hidden="true">TWK</span>
+      <span className="brand__monogram" aria-hidden="true">
+        <img src={BOOK.cover} alt="The Things We Keep cover" />
+      </span>
       <span className="brand__words"><span>The Things We Keep</span><small>Stories by Soumik Halder</small></span>
     </InternalLink>
   );
@@ -163,40 +165,7 @@ function ImageLayer({ story, className = '' }) {
   );
 }
 
-function StoryCard({ story, index, navigate }) {
-  const hasText = STORIES_WITH_TEXT.has(story.slug);
-  return (
-    <article className={`story-card story-card--${story.slug}`} style={{ '--story-accent': story.palette.accent, '--story-glow': story.palette.glow, '--story-surface': story.palette.surface }}>
-      <InternalLink to={`/stories/${story.slug}`} navigate={navigate} className="story-card__link" aria-label={`Explore ${story.title}`}>
-        <div className="story-card__art">
-          <img src={story.image} alt={story.imageAlt} loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('image-layer__failed')} />
-          <span className="story-card__wash" />
-          <span className="story-card__number">{String(index + 1).padStart(2, '0')}</span>
-          <span className="story-card__format">{story.format}</span>
-          <span className="story-card__motif">{story.motif}</span>
-          <span className="story-card__availability">{hasText ? (story.readingMode === 'full' ? 'FULL STORY · FREE' : 'READ PREVIEW') : 'IN THE COLLECTION'}</span>
-          <span className="story-card__open" aria-hidden="true"><Arrow diagonal /></span>
-        </div>
-        <div className="story-card__copy">
-          <p className="story-card__category">{story.category}</p>
-          <h3>{story.title}</h3>
-          <p className="story-card__description">{story.shortLine}</p>
-          <span className="story-card__discover">Explore this story <Arrow /></span>
-        </div>
-      </InternalLink>
-    </article>
-  );
-}
 
-function SectionHeading({ eyebrow, title, body, align = 'left', id }) {
-  return (
-    <div className={`section-heading section-heading--${align}`}>
-      {eyebrow && <p className="eyebrow"><span />{eyebrow}</p>}
-      <h2 id={id}>{title}</h2>
-      {body && <p className="section-heading__body">{body}</p>}
-    </div>
-  );
-}
 
 function BookCover() {
   const [failed, setFailed] = useState(false);
@@ -336,16 +305,15 @@ function HomePage({ stories, navigate }) {
 }
 
 function StoryPage({ story, navigate }) {
+  return <StoryPageContent key={story.slug} story={story} navigate={navigate} />;
+}
+
+function StoryPageContent({ story, navigate }) {
   const storyIndex = STORIES.findIndex((item) => item.slug === story.slug);
   const hasText = STORIES_WITH_TEXT.has(story.slug);
   const storyPageRef = useRef(null);
   const [imageInspected, setImageInspected] = useState(false);
   const [selectedMotif, setSelectedMotif] = useState(null);
-
-  useEffect(() => {
-    setImageInspected(false);
-    setSelectedMotif(null);
-  }, [story.slug]);
 
   useEffect(() => {
     const page = storyPageRef.current;
