@@ -36,6 +36,47 @@ const UNSPLASH_SCENES = {
   lighthouseDetail: 'https://images.unsplash.com/photo-1758301064875-b46ec97564dd?auto=format&fit=crop&w=2200&q=84&crop=entropy',
 };
 
+// Additional photographic plates placed between paragraphs in the reader. These supplement,
+// rather than replace, each story's existing artwork and any readerImages already in its JSON.
+const SUPPLEMENTAL_READER_PHOTOS = {
+  'the-lighthouse': [
+    { src: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1500&q=82', alt: 'Dark ocean water beneath a heavy sky', caption: 'The sea beyond the light', layout: 'wide', afterRatio: 0.28 },
+    { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1300&q=82', alt: 'A lonely, misty coastal landscape', caption: 'A coast with no easy way home', layout: 'portrait', afterRatio: 0.68 },
+  ],
+  'the-things-we-keep': [
+    { src: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1500&q=82', alt: 'A deep, dark night sky', caption: 'Time held at a distance', layout: 'wide', afterRatio: 0.3 },
+    { src: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1300&q=82', alt: 'A cold mountain under a star-filled night', caption: 'The cold silence of preservation', layout: 'portrait', afterRatio: 0.7 },
+  ],
+  'the-emerald-dress': [
+    { src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1300&q=82', alt: 'A solitary figure in elegant fashion', caption: 'Elegance with a shadow behind it', layout: 'portrait', afterRatio: 0.32 },
+    { src: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1500&q=82', alt: 'A dimly lit room with carefully arranged objects', caption: 'The room remembers', layout: 'wide', afterRatio: 0.7 },
+  ],
+  'a-beautiful-bargain': [
+    { src: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1500&q=82', alt: 'A remote mountain beneath a dark sky', caption: 'The price of wanting more', layout: 'wide', afterRatio: 0.3 },
+    { src: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1300&q=82', alt: 'Dark trees gathered in a dense forest', caption: 'A path that asks for something back', layout: 'portrait', afterRatio: 0.68 },
+  ],
+  durga: [
+    { src: 'https://images.unsplash.com/photo-1604608672516-8b7d4b9f6a4d?auto=format&fit=crop&w=1500&q=82', alt: 'Warm lights glowing in a night-time festival scene', caption: 'The glow of a crowded night', layout: 'wide', afterRatio: 0.3 },
+    { src: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1300&q=82', alt: 'A quiet interior filled with shadow', caption: 'What remains after the lights', layout: 'portrait', afterRatio: 0.7 },
+  ],
+  'the-girl-who-wanted-to-be-seen': [
+    { src: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1300&q=82', alt: 'A lone figure standing apart from the world', caption: 'The ache of being noticed', layout: 'portrait', afterRatio: 0.3 },
+    { src: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1500&q=82', alt: 'A vast night sky fading into darkness', caption: 'A small life beneath a vast dark', layout: 'wide', afterRatio: 0.7 },
+  ],
+  'the-confession': [
+    { src: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1500&q=82', alt: 'A shadowed room with a solitary pool of light', caption: 'The room where truth waits', layout: 'wide', afterRatio: 0.3 },
+    { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1300&q=82', alt: 'An empty landscape under muted light', caption: 'Nothing left to hide behind', layout: 'portrait', afterRatio: 0.7 },
+  ],
+  'you-came-back': [
+    { src: 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1500&q=82', alt: 'A dark forest path disappearing between trees', caption: 'The path that returns', layout: 'wide', afterRatio: 0.28 },
+    { src: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1300&q=82', alt: 'An empty road winding through a quiet landscape', caption: 'A familiar way into the unknown', layout: 'portrait', afterRatio: 0.7 },
+  ],
+  karam: [
+    { src: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1500&q=82', alt: 'A distant mountain under a starry night', caption: 'The weight of a choice', layout: 'wide', afterRatio: 0.3 },
+    { src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1300&q=82', alt: 'A lonely path through a broad landscape', caption: 'The road each of them must take', layout: 'portrait', afterRatio: 0.7 },
+  ],
+};
+
 function getStoryParagraphs(slug) {
   const source = (STORY_TEXT[slug] || '').replace(/\r\n?/g, '\n').trim();
   if (!source) return [];
@@ -51,7 +92,9 @@ const BOOK = {
   subtitle: 'Dark Tales of Guilt and Consequence',
   author: 'Soumik Halder',
   kindleIndia: 'https://www.amazon.in/dp/B0HML17SSR',
-  kindleGlobal: 'https://kdp.amazon.com/amazon-dp-action/us/dualbookshelf.marketplacelink/B0HML17SSR',
+  kindleGlobal: 'https://www.amazon.com/Things-We-Keep-Tales-Consequence-ebook/dp/B0HML17SSR',
+  paperback: 'https://www.amazon.com/Things-We-Keep-Tales-Consequence/dp/B0HMRQ99T5',
+  hardcover: 'https://www.amazon.com/Things-We-Keep-Tales-Consequence/dp/B0HMST7VLV',
   hardcoverIndia: 'https://forms.gle/LPfTPWX8zVFNH5Zj6',
   cover: '/book-mockup.png',
 };
@@ -126,9 +169,7 @@ function Arrow({ diagonal = false, down = false }) {
 function Brand({ navigate }) {
   return (
     <InternalLink to="/" navigate={navigate} className="brand" aria-label="Soumik Halder — home">
-      <span className="brand__monogram" aria-hidden="true">
-        <img src={BOOK.cover} alt="The Things We Keep cover" />
-      </span>
+      <span className="brand__monogram" aria-hidden="true">TWK</span>
       <span className="brand__words"><span>The Things We Keep</span><small>Stories by Soumik Halder</small></span>
     </InternalLink>
   );
@@ -148,7 +189,7 @@ function Header({ navigate, active = 'home' }) {
           <InternalLink to="/#stories" navigate={navigate} className={active === 'stories' ? 'is-active' : ''} onClick={closeMenu}>The stories</InternalLink>
           <InternalLink to="/#threshold" navigate={navigate} onClick={closeMenu}>The idea</InternalLink>
           <InternalLink to="/about" navigate={navigate} onClick={closeMenu}>About</InternalLink>
-          <a className="site-nav__buy" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" onClick={closeMenu}>Get the book <Arrow diagonal /></a>
+          <InternalLink to="/#book" navigate={navigate} className="site-nav__buy" onClick={closeMenu}>Get the book <Arrow /></InternalLink>
         </nav>
       </div>
     </header>
@@ -164,7 +205,6 @@ function ImageLayer({ story, className = '' }) {
     </div>
   );
 }
-
 
 
 function BookCover() {
@@ -289,10 +329,12 @@ function HomePage({ stories, navigate }) {
           <div className="book-threshold__copy">
             <p className="book-threshold__eyebrow">The complete collection</p>
             <h2>The story does not<br /><em>end here.</em></h2>
-            <p><strong>The Things We Keep: Dark Tales of Guilt and Consequence</strong> brings together nine unsettling worlds of grief, memory, obsession, sacrifice and the cost of the things we cannot release.</p>
+            <p><strong>The Things We Keep: Dark Tales of Guilt and Consequence</strong> brings together nine unsettling worlds of grief, memory, obsession, sacrifice and the cost of the things we cannot release. <span className="book-threshold__availability">Available in Kindle ebook, paperback and hardcover editions.</span></p>
             <div className="book-threshold__actions">
-              <a className="book-threshold__primary" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the Kindle edition <span aria-hidden="true">↗</span></a>
-              <a className="book-threshold__secondary" href={BOOK.kindleGlobal} target="_blank" rel="noreferrer noopener">Other Amazon stores</a>
+              <a className="book-threshold__primary" href={BOOK.kindleGlobal} target="_blank" rel="noreferrer noopener">Get the Kindle ebook <span aria-hidden="true">↗</span></a>
+              <a className="book-threshold__secondary" href={BOOK.paperback} target="_blank" rel="noreferrer noopener">Buy the paperback ↗</a>
+              <a className="book-threshold__secondary" href={BOOK.hardcover} target="_blank" rel="noreferrer noopener">Buy the hardcover ↗</a>
+              <a className="book-threshold__secondary" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Kindle edition on Amazon India ↗</a>
               <a className="book-threshold__secondary" href={BOOK.hardcoverIndia} target="_blank" rel="noreferrer noopener">India hardcover enquiry</a>
             </div>
           </div>
@@ -305,15 +347,12 @@ function HomePage({ stories, navigate }) {
 }
 
 function StoryPage({ story, navigate }) {
-  return <StoryPageContent key={story.slug} story={story} navigate={navigate} />;
-}
-
-function StoryPageContent({ story, navigate }) {
   const storyIndex = STORIES.findIndex((item) => item.slug === story.slug);
   const hasText = STORIES_WITH_TEXT.has(story.slug);
   const storyPageRef = useRef(null);
   const [imageInspected, setImageInspected] = useState(false);
   const [selectedMotif, setSelectedMotif] = useState(null);
+
 
   useEffect(() => {
     const page = storyPageRef.current;
@@ -374,6 +413,13 @@ function StoryPageContent({ story, navigate }) {
           </div>
         </section>
 
+        <section id="story-question" className="story-page__threshold" aria-label="The question at the heart of the story">
+          <div className="story-page__threshold-inner">
+            <p className="eyebrow" data-reveal style={{ '--reveal-delay': '80ms' }}><span />The question that remains</p>
+            <h2 data-reveal style={{ '--reveal-delay': '210ms' }}>{story.coreQuestion || story.underneath || story.shortLine}</h2>
+            <div className="story-page__threshold-mark" data-reveal style={{ '--reveal-delay': '380ms' }} aria-hidden="true"><i /><span>{String(storyIndex + 1).padStart(2, '0')}</span><i /></div>
+          </div>
+        </section>
 
         <section id="story-details" className="story-page__body section-wrap">
           <div className="story-page__main-copy">
@@ -411,7 +457,7 @@ function StoryPageContent({ story, navigate }) {
               {hasText ? (
                 <InternalLink to={`/read/${story.slug}`} navigate={navigate} className="button button--light">{story.readingMode === 'full' ? 'Read the complete story — free' : 'Read the available preview'} <Arrow /></InternalLink>
               ) : (
-                <a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" className="button button--light">Discover it in the book <Arrow diagonal /></a>
+                <InternalLink to="/#book" navigate={navigate} className="button button--light">Explore book editions <Arrow /></InternalLink>
               )}
               <InternalLink to="/#book" navigate={navigate} className="text-link">Explore editions <Arrow /></InternalLink>
             </div>
@@ -435,7 +481,7 @@ function StoryPageContent({ story, navigate }) {
         <section className="story-page__book-strip" data-reveal>
           <div className="section-wrap story-page__book-inner">
             <div><p className="eyebrow"><span />Inside the collection</p><h2>{story.readingMode === 'full' ? 'Keep wandering through the dark.' : 'The rest of the collection is waiting.'}</h2></div>
-            <a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener" className="button button--light">Find the book <Arrow diagonal /></a>
+            <InternalLink to="/#book" navigate={navigate} className="button button--light">Explore book editions <Arrow /></InternalLink>
           </div>
         </section>
 
@@ -456,7 +502,7 @@ function buildReaderSegments(paragraphs, images = []) {
   }
   const placements = new Map();
   const used = new Set();
-  images.slice(0, 3).forEach((image, imageIndex) => {
+  images.slice(0, 5).forEach((image, imageIndex) => {
     let position = Math.round((paragraphs.length - 1) * (image.afterRatio ?? ((imageIndex + 1) / (images.length + 1))));
     position = Math.max(0, Math.min(paragraphs.length - 1, position));
     if (used.has(position)) {
@@ -481,7 +527,8 @@ function buildReaderSegments(paragraphs, images = []) {
 
 function ReaderPage({ story, navigate }) {
   const displayedParagraphs = getStoryParagraphs(story.slug);
-  const readerSegments = buildReaderSegments(displayedParagraphs, story.readerImages || []);
+  const readerPhotos = [...(story.readerImages || []), ...(SUPPLEMENTAL_READER_PHOTOS[story.slug] || [])];
+  const readerSegments = buildReaderSegments(displayedParagraphs, readerPhotos);
   const [lightbox, setLightbox] = useState(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const hasFullText = story.readingMode === 'full' && displayedParagraphs.length > 0;
@@ -548,14 +595,14 @@ function ReaderPage({ story, navigate }) {
                     <img src={segment.image.src} alt={segment.image.alt} loading="lazy" decoding="async" onError={(event) => event.currentTarget.classList.add('reader-plate__failed')} />
                     <span className="reader-plate__zoom" aria-hidden="true">↗</span>
                   </button>
-                  <figcaption><span>{segment.image.caption}</span><small>FIG. {String((story.readerImages || []).indexOf(segment.image) + 1).padStart(2, '0')}</small></figcaption>
+                  <figcaption><span>{segment.image.caption}</span><small>FIG. {String(readerPhotos.indexOf(segment.image) + 1).padStart(2, '0')}</small></figcaption>
                 </figure>
               ))}
               <div className="reader-article__ending" data-reveal>
                 <span>{hasFullText ? 'END OF STORY' : 'THE SAMPLE ENDS HERE'}</span>
                 <h2>{hasFullText ? 'Thank you for reading.' : 'There is more beyond this door.'}</h2>
                 <p>{hasFullText ? 'The other doors are open. Find the story that stays with you next.' : 'This preview ends here. The complete story belongs to the collection.'}</p>
-                {hasFullText ? <InternalLink to="/#stories" navigate={navigate} className="button button--light">Explore all stories <Arrow /></InternalLink> : <a className="button button--light" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the collection <Arrow diagonal /></a>}
+                {hasFullText ? <InternalLink to="/#stories" navigate={navigate} className="button button--light">Explore all stories <Arrow /></InternalLink> : <InternalLink to="/#book" navigate={navigate} className="button button--light">Explore book editions <Arrow /></InternalLink>}
               </div>
             </div>
           ) : (
@@ -563,7 +610,7 @@ function ReaderPage({ story, navigate }) {
               <span className="reader-article__lockmark" aria-hidden="true">✳</span>
               <h2>This story awaits inside the collection.</h2>
               <p>We are keeping the full digital text with the book for now. Discover the story in <em>The Things We Keep</em>.</p>
-              <a className="button button--light" href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the book <Arrow diagonal /></a>
+              <InternalLink to="/#book" navigate={navigate} className="button button--light">Explore book editions <Arrow /></InternalLink>
             </div>
           )}
         </article>
@@ -599,7 +646,7 @@ function Footer({ navigate }) {
         <div className="site-footer__links">
           <InternalLink to="/#stories" navigate={navigate}>Enter the stories</InternalLink>
           <InternalLink to="/about" navigate={navigate}>About the author</InternalLink>
-          <a href={BOOK.kindleIndia} target="_blank" rel="noreferrer noopener">Find the book ↗</a>
+          <InternalLink to="/#book" navigate={navigate}>Explore book editions ↗</InternalLink>
         </div>
       </div>
       <div className="site-footer__bottom section-wrap">
@@ -660,5 +707,5 @@ export default function App() {
   if (route.kind === 'home') return <HomePage stories={STORIES} navigate={navigate} />;
   if (!currentStory) return <NotFound navigate={navigate} />;
   if (route.kind === 'read') return <ReaderPage story={currentStory} navigate={navigate} />;
-  return <StoryPage story={currentStory} navigate={navigate} />;
+  return <StoryPage key={currentStory.slug} story={currentStory} navigate={navigate} />;
 }
